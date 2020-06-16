@@ -1,12 +1,23 @@
 module.exports = (sequelize, DataTypes) => {
   const Passenger = sequelize.define('Passenger', {
-    name: {
+    email: {
+      type: DataTypes.STRING,
+    },
+    password: {
       type: DataTypes.STRING
-    }
-      
-  }, {
-    timestamps: false
+    },
+    profile_pic: {
+      type: DataTypes.STRING
+    },
+    first_name: {
+      type: DataTypes.STRING
+    },
+    last_name: {
+      type: DataTypes.STRING
+    },
+    address: {
+      type: DataTypes.STRING
+    },
   })
-
   return Passenger;
 }

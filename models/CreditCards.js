@@ -1,8 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
   const Credit_cards = sequelize.define('Credit_cards', {
-    CVV: {
-      type: DataTypes.STRING
-    },
     card_no: {
       type: DataTypes.STRING
     },
@@ -11,7 +8,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     exp_date: {
       type: DataTypes.STRING
-    }
+    },
+    CVV: {
+      type: DataTypes.STRING
+    },
   }, {
     timestamps: false
   })

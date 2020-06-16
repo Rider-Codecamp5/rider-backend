@@ -9,6 +9,9 @@ module.exports = (sequelize, DataTypes) => {
         car_model : {
             type : DataTypes.STRING,
         },
+        car_color: {
+            type: DataTypes.STRING,
+        },
         bank_account : {
             type : DataTypes.STRING,
         }

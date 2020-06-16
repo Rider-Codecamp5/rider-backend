@@ -1,21 +1,6 @@
 const express = require('express');
-<<<<<<< HEAD
-const app = express();
-const cors = require('cors');
-const db = require('./models');
-
-app.use(express.json());
-app.use(express.urlencoded({extended: false}));
-app.use(cors());
-
-
-db.sequelize.sync().then(()=>{
-    app.listen(8000, ()=> {console.log("server is running in port 8000 ")})
-});
-=======
 const db = require('./models')
 const app = express();
-const bodyParser = require('body-parser');
 const cors = require('cors')
 
 // const creditCardsRoutes = require('./routes/CreditCards')
@@ -37,4 +22,3 @@ db.sequelize.sync({alter: false}).then(() => {
     console.log('Server is running on port 8000')
   });
 })
->>>>>>> origin/thanawatRegister
