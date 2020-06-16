@@ -1,5 +1,10 @@
 module.exports = (sequelize, DataTypes) => {
-    const Driver = sequelize.define('Driver', {
+    const driver = sequelize.define('driver', {
+        id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: false,
+            primaryKey: true
+        },
         driver_license : {
             type : DataTypes.STRING,
         },
@@ -17,5 +22,12 @@ module.exports = (sequelize, DataTypes) => {
         }
     })
 
-    return Driver
+    driver.associate = models => {
+        driver.belongsTo(models.user, {
+            through: models.reserve
+        });
+        driver.hasMany(models.trip_history);
+    }
+
+    return driver
 }
