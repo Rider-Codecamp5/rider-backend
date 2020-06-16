@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const Trip = sequelize.define('Trips', {
+    const tripHistory = sequelize.define('trip_history', {
         from : {
             type: DataTypes.STRING,
         },
@@ -22,5 +22,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
         }
     })
-    return Trip
+
+    tripHistory.associate = models => {
+        tripHistory.belongsTo(models.user);
+        tripHistory.belongsTo(models.driver);
+    }
+
+    return tripHistory
 }

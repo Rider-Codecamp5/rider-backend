@@ -1,5 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
-    const Reserve = sequelize.define('Reserves', {
+    const reserve = sequelize.define('reserves', {
         from : {
             type: DataTypes.STRING,
         },
@@ -22,5 +22,8 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
         }
     })
-    return Reserve
+
+    
+
+    return reserve
 }
