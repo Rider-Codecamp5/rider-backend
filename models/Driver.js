@@ -1,15 +1,15 @@
 module.exports = (sequelize, DataTypes) => {
     const Driver = sequelize.define('Driver', {
-        DriverLicense : {
+        driver_license : {
             type : DataTypes.STRING,
         },
-        Seat : {
+        seat : {
             type : DataTypes.INTEGER,
         },
-        CarModel : {
+        car_model : {
             type : DataTypes.STRING,
         },
-        BankAccount : {
+        bank_account : {
             type : DataTypes.STRING,
         }
     })
