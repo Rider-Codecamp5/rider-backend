@@ -7,6 +7,7 @@ const cors = require('cors')
 // const passengerRoutes = require('./routes/Passenger')
 // const reportRoutes = require('./routes/Report')
 const userRoutes = require('./routes/User')
+const driverRoutes = require('./routes/Driver')
 
 app.use(cors());
 app.use(express.json());
@@ -16,6 +17,7 @@ app.use(express.urlencoded({extended: false}));
 // app.use("/passenger", passengerRoutes);
 // app.use("/report", reportRoutes);
 app.use("/user", userRoutes)
+app.use('/driver',driverRoutes)
 
 require('./config/passport/passport')
 
