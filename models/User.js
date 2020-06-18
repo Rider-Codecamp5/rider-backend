@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
 
   user.associate = models => {
     user.hasOne(models.driver, {
-      through: models.reserve
+      foreignKey: "passenger_id",
     });
     user.hasMany(models.trip_history);
   }
