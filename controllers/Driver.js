@@ -51,6 +51,4 @@ const deleteDriver = async (req, res) => {
 
 
 
-
-
 module.exports = { registerDriver, deleteDriver }
