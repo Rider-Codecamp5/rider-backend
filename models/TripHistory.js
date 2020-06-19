@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
         date_time : {
             type: DataTypes.STRING,
         },
-        number_of_seat : {
+        booked_seat : {
             type: DataTypes.INTEGER,
         },
         price : {
