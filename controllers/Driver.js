@@ -43,7 +43,7 @@ const offerRoute = async (req, res) => {
     const destination = req.body.destination;
     const date_time = req.body.date + " " + req.body.time;
     const luggage = req.body.luggage;
-    const seating_capacity = req.body.seating_capacity;
+    const seating_capacity = req.body.seatingCapacity;
     const price = req.body.price;
 
     const body = {
