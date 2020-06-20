@@ -3,7 +3,7 @@ const db = require('../models');
 const registerDriver = async (req, res) => {
     const id = req.params.userId;
     const driver_license = req.body.driver_license;
-    const seating_capacity = req.body.seating_capacity;
+    const seat = req.body.seat;
     const car_model = req.body.car_model;
     const car_color = req.body.car_color;
     const bank_account = req.body.bank_account;
@@ -11,7 +11,7 @@ const registerDriver = async (req, res) => {
     const body = {
         id,
         driver_license,
-        seating_capacity,
+        seat,
         car_model,
         car_color,
         bank_account,
@@ -41,6 +41,8 @@ const offerRoute = async (req, res) => {
     let userData = await req.user;
     const origin = req.body.origin;
     const destination = req.body.destination;
+    const geocodeOrigin = req.body.geocodeOrigin;
+    const geocodeDestination = req.body.geocodeDestination
     const date_time = req.body.date + " " + req.body.time;
     const luggage = req.body.luggage;
     const seating_capacity = req.body.seatingCapacity;
@@ -49,6 +51,8 @@ const offerRoute = async (req, res) => {
     const body = {
         from: origin,
         to: destination,
+        geocode_from: geocodeOrigin,
+        geocode_to: geocodeDestination,
         date_time,
         luggage,
         seating_capacity,
