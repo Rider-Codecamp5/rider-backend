@@ -21,7 +21,7 @@ app.use('/driver',driverRoutes)
 
 require('./config/passport/passport')
 
-db.sequelize.sync({force: false}).then(() => {
+db.sequelize.sync({force: true}).then(() => {
   app.listen(8000, () => {
     console.log('Server is running on port 8000')
   });

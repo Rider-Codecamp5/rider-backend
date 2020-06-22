@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
         driver_license : {
             type : DataTypes.STRING,
         },
-        seating_capacity : {
+        seat : {
             type : DataTypes.INTEGER,
         },
         car_model : {
@@ -26,7 +26,16 @@ module.exports = (sequelize, DataTypes) => {
         to : {
             type: DataTypes.STRING,
         },
+        geocode_from: {
+            type: DataTypes.STRING,
+        },
+        geocode_to: {
+            type: DataTypes.STRING,
+        },
         date_time : {
+            type: DataTypes.STRING,
+        },
+        seating_capacity: {
             type: DataTypes.STRING,
         },
         luggage: {
