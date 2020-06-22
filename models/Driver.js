@@ -26,11 +26,17 @@ module.exports = (sequelize, DataTypes) => {
         to : {
             type: DataTypes.STRING,
         },
-        geocode_from: {
-            type: DataTypes.STRING,
+        from_lat: {
+            type: DataTypes.FLOAT,
         },
-        geocode_to: {
-            type: DataTypes.STRING,
+        from_lng: {
+            type: DataTypes.FLOAT,
+        },
+        to_lat: {
+            type: DataTypes.FLOAT,
+        },
+        to_lng: {
+            type: DataTypes.FLOAT,
         },
         date_time : {
             type: DataTypes.STRING,
