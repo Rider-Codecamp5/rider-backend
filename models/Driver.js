@@ -42,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
         },
         seating_capacity: {
-            type: DataTypes.STRING,
+            type: DataTypes.INTEGER,
         },
         luggage: {
             type : DataTypes.BOOLEAN,

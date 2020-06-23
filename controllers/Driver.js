@@ -40,9 +40,11 @@ const deleteDriver = async (req, res) => {
 const offerRoute = async (req, res) => {
     let userData = await req.user;
     const origin = req.body.origin;
+    const originLat = req.body.originLat;
+    const originLng = req.body.originLng;
     const destination = req.body.destination;
-    const geocodeOrigin = req.body.geocodeOrigin;
-    const geocodeDestination = req.body.geocodeDestination
+    const destinationLat = req.body.destinationLat;
+    const destinationLng = req.body.destinationLng;
     const date_time = req.body.date + " " + req.body.time;
     const luggage = req.body.luggage;
     const seating_capacity = req.body.seatingCapacity;
@@ -50,9 +52,11 @@ const offerRoute = async (req, res) => {
 
     const body = {
         from: origin,
+        from_lat: originLat,
+        from_lng: originLng,
         to: destination,
-        geocode_from: geocodeOrigin,
-        geocode_to: geocodeDestination,
+        to_lat: destinationLat,
+        to_lng: destinationLng,
         date_time,
         luggage,
         seating_capacity,
