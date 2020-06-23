@@ -18,6 +18,9 @@ module.exports = (sequelize, DataTypes) => {
     address: {
       type: DataTypes.STRING
     },
+    phone_number: {
+      type: DataTypes.STRING
+    }
   })
 
   user.associate = models => {
