@@ -79,18 +79,19 @@ const findTrip = async (req, res) => {
   // 13.9888426 100.6177962 future rangsit
   // 13.7449649 100.5338814 siam square
 
-  const { geocode_to } = req.query;
+  const destinationLat = Number(req.query.destinationLat);
+  const destinationLng = Number(req.query.destinationLng);
 
   const DISTANCE = 0.00899322;
 
   try {
     const result = await db.driver.findAll({
       where: {
-        // geocode_from: {
-        //   [Op.between]: [geocode_from - DISTANCE, geocode_from + DISTANCE],
-        // },
-        geocode_to: {
-          [Op.between]: [geocode_to - DISTANCE, geocode_to + DISTANCE],
+        to_lat: {
+          [Op.between]: [destinationLat - DISTANCE, destinationLng + DISTANCE],
+        },
+        to_lng: {
+          [Op.between]: [destinationLat - DISTANCE, destinationLng + DISTANCE],
         },
       },
     });

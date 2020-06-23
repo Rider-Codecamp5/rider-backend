@@ -10,6 +10,6 @@ router.post('/loginUser', userController.loginUser);
 router.get('/getUser/:id', auth, userController.getUser);
 
 //  find trip
-router.get('/trip', auth, userController.getUser);
+router.get('/trip', userController.findTrip);
 
 module.exports = router;
