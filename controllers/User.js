@@ -9,6 +9,7 @@ const createUser = async (req, res) => {
   const first_name = req.body.first_name;
   const last_name = req.body.last_name;
   const address = req.body.address;
+  const phone_number = req.body.phone_number;
   try {
     const filters = { email: email }
     const user = await db.user.findOne({ where: filters })
@@ -25,6 +26,7 @@ const createUser = async (req, res) => {
         first_name,
         last_name,
         address,
+        phone_number,
       }
       const created = await db.user.create(body)
       res.status(200).send({message : 'User created', created})

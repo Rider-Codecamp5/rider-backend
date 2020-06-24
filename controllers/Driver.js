@@ -1,7 +1,8 @@
 const db = require('../models');
 
 const registerDriver = async (req, res) => {
-    const id = req.params.userId;
+    let userData = await req.user;
+    const id = req.body.id;
     const driver_license = req.body.driver_license;
     const seat = req.body.seat;
     const car_model = req.body.car_model;
@@ -76,4 +77,27 @@ const offerRoute = async (req, res) => {
     })
 }
 
-module.exports = { registerDriver, deleteDriver, offerRoute }
+const getDriverInformation = async (req,res) => {
+    const id = req.params.userId;
+    const driver = await db.findOne({where: {id: id}})
+    if(driver){
+        res.status(200).send({message: "OK",driver:driver})
+    }else{
+        res.status(400).send({message: "your aren't driver"})
+    }
+}
+
+
+const registered = async (req,res) => {
+    const id = req.params.userId;
+    const driver = await db.driver.findOne({where: {id: id}})
+
+    if(driver){
+        res.status(200).send(true);
+    }else{
+        res.status(404).send()
+    }
+
+}
+
+module.exports = { registerDriver, deleteDriver, offerRoute, getDriverInformation ,registered}
