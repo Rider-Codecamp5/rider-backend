@@ -4,31 +4,31 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
     },
     password: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     profile_pic: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     first_name: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     last_name: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     address: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
     },
     phone_number: {
-      type: DataTypes.STRING
-    }
-  })
+      type: DataTypes.STRING,
+    },
+  });
 
   user.associate = models => {
     user.hasOne(models.driver, {
-      foreignKey: "passenger_id",
+      through: models.reserve,
     });
     user.hasMany(models.trip_history);
-  }
+  };
 
   return user;
-}
+};
