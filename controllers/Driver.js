@@ -79,11 +79,16 @@ const offerRoute = async (req, res) => {
 
 const getDriverInformation = async (req,res) => {
     const id = req.params.userId;
-    const driver = await db.findOne({where: {id: id}})
-    if(driver){
-        res.status(200).send({message: "OK",driver:driver})
-    }else{
-        res.status(400).send({message: "your aren't driver"})
+    const driver = await db.driver.findOne({where: {id: id}})
+    try{
+        if(driver){
+            res.status(200).send({message: "OK",driver:driver})
+        }else{
+            // res.status(400).send({message: "your aren't driver"})
+            res.status(400).send()
+        }
+    }catch (error) {
+        res.status(400).send()
     }
 }
 
@@ -100,4 +105,7 @@ const registered = async (req,res) => {
 
 }
 
-module.exports = { registerDriver, deleteDriver, offerRoute, getDriverInformation ,registered}
+
+
+
+module.exports = { registerDriver, deleteDriver, offerRoute, getDriverInformation ,registered }
