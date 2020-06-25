@@ -12,4 +12,6 @@ router.get('/getDriverInformation/:userId',auth,controllerDriver.getDriverInform
 router.get('/registered/:userId', controllerDriver.registered)
 router.patch('/service', auth, controllerDriver.offerRoute);
 
+router.patch('/edited',auth,controllerDriver.edited)
+
 module.exports = router

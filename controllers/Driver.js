@@ -106,6 +106,44 @@ const registered = async (req,res) => {
 }
 
 
+const edited = async (req,res) => {
+    const id = await req.user.id;
+    const driver_license = req.body.driver_license;
+    const car_model = req.body.car_model;
+    const car_color = req.body.car_color;
+    const seat = req.body.seat;
+    const bank_account = req.body.bank_account;
+
+    const values = {driver_license: driver_license}
+    if(car_model){
+        values['car_model'] = car_model;
+    }
+    if(car_color){
+        values['car_color'] = car_color;
+    }
+    if(seat){
+        values['seat'] = seat;
+    }
+    if(bank_account){
+        values['bank_account'] = bank_account;
+    }
+    const user = await db.driver.findOne({where : {id:id}})
+    if(user) {
+        const edit = await db.driver.update(values,{ where:{id:id}})
+        try{
+            res.status(200).send({edit:edit})
+        }catch (error){
+            console.log(error)
+            res.status(400).send({message: 'error'})
+        }
+    }else {
+        res.status(400).send({message: `Don't have user`})
+    }
+    
+    res.send({id:id})
+}
 
 
-module.exports = { registerDriver, deleteDriver, offerRoute, getDriverInformation ,registered }
+
+
+module.exports = { registerDriver, deleteDriver, offerRoute, getDriverInformation ,registered, edited }

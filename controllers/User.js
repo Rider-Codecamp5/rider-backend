@@ -30,7 +30,7 @@ const createUser = async (req, res) => {
         phone_number,
       }
       const created = await db.user.create(body)
-      res.status(200).send({message : 'User created', created})
+      res.status(200).send({ message: 'User created', created })
     }
   } catch (error) {
     console.log(error);
@@ -104,4 +104,45 @@ const findTrip = async (req, res) => {
   }
 };
 
-module.exports = { createUser, loginUser, getUser, findTrip };
+
+const edited = async (req, res) => {
+  const id = await req.user.id;
+  const first_name = req.body.first_name;
+  const last_name = req.body.last_name;
+  const address = req.body.address;
+  const phone_number = req.body.phone_number;
+  const profile_pic = req.body.profile_pic;
+
+  const user = await db.user.findOne({ where: { id: id } });
+
+  const values = { first_name: first_name };
+  if (last_name) {
+    values['last_name'] = last_name;
+  }
+  if (address) {
+    values['address'] = address;
+  }
+  if (phone_number) {
+    values['phone_number'] = phone_number;
+  }
+  if (profile_pic) {
+    values['profile_pic'] = profile_pic;
+  }
+
+  if (user) {
+    const edited = await db.user.update(values, {where: {id: id}})
+    try{
+      res.status(200).send({ message: 'user edited', edited: edited });
+    } catch (error) {
+      res.status(400).send(error);
+    }
+  } else {
+    res.status(400).send(`Invalid user`);
+  }
+}
+
+
+
+
+
+module.exports = { createUser, loginUser, getUser, findTrip, edited };
