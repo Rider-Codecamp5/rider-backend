@@ -69,16 +69,6 @@ const getUser = async (req, res) => {
 };
 
 const findTrip = async (req, res) => {
-  // 13.8162899 100.5609968 central ladprao
-
-  // 13.8133627 100.5618615 union mall
-  // 13.8043117 100.5538347 chatuchak park
-  // 13.8286184 100.5686844 major ratchayothin
-  // 13.8023369 100.5533361 bts mor chit
-
-  // 13.9888426 100.6177962 future rangsit
-  // 13.7449649 100.5338814 siam square
-
   const destinationLat = Number(req.query.destinationLat);
   const destinationLng = Number(req.query.destinationLng);
 
@@ -102,4 +92,17 @@ const findTrip = async (req, res) => {
   }
 };
 
-module.exports = { createUser, loginUser, getUser, findTrip };
+const selectDriver = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const driver = await db.driver.findOne({
+      where: { id },
+    });
+    res.status(200).send(driver);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+module.exports = { createUser, loginUser, getUser, findTrip, selectDriver };
