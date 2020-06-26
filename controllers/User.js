@@ -59,8 +59,8 @@ const loginUser = async (req, res) => {
   }
 };
 
-const getUser = async (req, res) => {
-  const id = req.params.id;
+const get = async (req, res) => {
+  const id = await req.user.id;
   const userData = await db.user.findOne({ where: { id: id } });
   try {
     res.send({ userData: userData });
@@ -145,4 +145,4 @@ const edited = async (req, res) => {
 
 
 
-module.exports = { createUser, loginUser, getUser, findTrip, edited };
+module.exports = { createUser, loginUser, get, findTrip, edited };
