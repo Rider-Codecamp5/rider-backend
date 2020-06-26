@@ -115,7 +115,10 @@ const edited = async (req, res) => {
 
   const user = await db.user.findOne({ where: { id: id } });
 
-  const values = { first_name: first_name };
+  const values = {};
+  if (first_name) {
+    values['first_name'] = first_name;
+  }
   if (last_name) {
     values['last_name'] = last_name;
   }
