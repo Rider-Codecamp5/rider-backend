@@ -77,8 +77,8 @@ const offerRoute = async (req, res) => {
     })
 }
 
-const getDriverInformation = async (req,res) => {
-    const id = req.params.userId;
+const get = async (req,res) => {
+    const id = req.user.id;
     const driver = await db.driver.findOne({where: {id: id}})
     try{
         if(driver){
@@ -149,4 +149,4 @@ const edited = async (req,res) => {
 
 
 
-module.exports = { registerDriver, deleteDriver, offerRoute, getDriverInformation ,registered, edited }
+module.exports = { registerDriver, deleteDriver, offerRoute, get ,registered, edited }
