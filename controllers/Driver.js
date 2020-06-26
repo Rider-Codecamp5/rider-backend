@@ -77,8 +77,8 @@ const offerRoute = async (req, res) => {
     })
 }
 
-const getDriverInformation = async (req,res) => {
-    const id = req.params.userId;
+const get = async (req,res) => {
+    const id = req.user.id;
     const driver = await db.driver.findOne({where: {id: id}})
     try{
         if(driver){
@@ -114,7 +114,10 @@ const edited = async (req,res) => {
     const seat = req.body.seat;
     const bank_account = req.body.bank_account;
 
-    const values = {driver_license: driver_license}
+    const values = {}
+    if(driver_license){
+        values['driver_license'] = driver_license;
+    }
     if(car_model){
         values['car_model'] = car_model;
     }
@@ -146,4 +149,4 @@ const edited = async (req,res) => {
 
 
 
-module.exports = { registerDriver, deleteDriver, offerRoute, getDriverInformation ,registered, edited }
+module.exports = { registerDriver, deleteDriver, offerRoute, get ,registered, edited }

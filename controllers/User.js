@@ -59,8 +59,8 @@ const loginUser = async (req, res) => {
   }
 };
 
-const getUser = async (req, res) => {
-  const id = req.params.id;
+const get = async (req, res) => {
+  const id = await req.user.id;
   const userData = await db.user.findOne({ where: { id: id } });
   try {
     res.send({ userData: userData });
@@ -117,7 +117,10 @@ const edited = async (req, res) => {
 
   const user = await db.user.findOne({ where: { id: id } });
 
-  const values = { first_name: first_name };
+  const values = {};
+  if (first_name) {
+    values['first_name'] = first_name;
+  }
   if (last_name) {
     values['last_name'] = last_name;
   }
@@ -146,7 +149,7 @@ const edited = async (req, res) => {
 module.exports = {
   createUser,
   loginUser,
-  getUser,
+  get,
   findTrip,
   edited,
   selectDriver,
