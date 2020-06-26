@@ -11,5 +11,6 @@ router.get('/getUser/:id', auth, userController.getUser);
 
 //  find trip
 router.get('/trip', userController.findTrip);
+router.get('/trip/:id', userController.selectDriver);
 
 module.exports = router;

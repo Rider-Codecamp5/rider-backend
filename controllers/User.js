@@ -102,4 +102,17 @@ const findTrip = async (req, res) => {
   }
 };
 
-module.exports = { createUser, loginUser, getUser, findTrip };
+const selectDriver = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const driver = await db.driver.findOne({
+      where: { id },
+    });
+    res.status(200).send(driver);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+module.exports = { createUser, loginUser, getUser, findTrip, selectDriver };
