@@ -11,9 +11,10 @@ router.delete('/delete/:userId', auth, controllerDriver.deleteDriver);
 router.get('/get', auth, controllerDriver.get);
 router.get('/registered/:userId', controllerDriver.registered);
 router.patch('/service', auth, controllerDriver.offerRoute);
-
-router.patch('/service/join', auth, controllerDriver.getPassenger);
+// router.patch('/service/wait', auth, controllerDriver.waitForPassenger);
 
 router.patch('/edited', auth, controllerDriver.edited);
+//passenger
+router.patch('/service/join', auth, controllerDriver.getPassenger);
 
 module.exports = router;
