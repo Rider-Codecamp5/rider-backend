@@ -76,32 +76,66 @@ const offerRoute = async (req, res) => {
     driver: userData.id,
     details: body,
   });
-
-  const checkPassenger = setInterval(async() => {
-    let waitingDriver = await db.driver.findOne({ where: { id: userData.id, status: 'available', passenger_id: null } });
-    if(!waitingDriver) {
-      clearInterval(checkPassenger);
-    }
-    console.log(waitingDriver.status);
-  }, 3000);
 };
 
-// const waitForPassenger = async(req, res) => {
+const waitForPassenger = async(req, res) => {
+  let userData = await req.user;
+  let bookedDriver;
+  let bookedDriverPromise = new Promise(function(resolve, reject) {
+    const checkPassenger = setInterval(async() => {
+      console.log('tick tock')
+      let currentDriver = await db.driver.findOne({ 
+        where: 
+          { 
+            id: userData.id, 
+            status: 'available', 
+            passenger_id: null 
+          } 
+      });
+      
+      try {
+        if(!currentDriver) {
+          clearInterval(checkPassenger);
+          let isSelected = await db.driver.update(
+            {status: 'selected'},
+            {where: {
+              id: userData.id
+            }},
+            )
+          if(isSelected) {
+            console.log('driver is booked', isSelected)
+            bookedDriver = await db.driver.findOne({where: {id: userData.id}})
+            resolve('driver is selected')
+            // console.log('driver status', currentDriver.status);
+          } else {
+            reject('something is wrong');
+          }
+        }
+      } catch(err) {
+        console.log(err)
+        clearInterval(checkPassenger);
+      }
+    }, 3000);
+  });
 
-//   let driverData = await db.driver.findOne({where: { id: userData.id }})
-//   const checkPassenger = setInterval(async() => {
-//     let waitingDriver = await db.driver.findOne({ where: { id: userData.id, status: 'available', passenger_id: null } });
-//     if(!waitingDriver) {
-//       clearInterval(checkPassenger);
-//     }
-//   }, 3000);
+  bookedDriverPromise.then(
+    (result) => {
+      res.status(201).json({
+        message: result,
+        driver: bookedDriver,
+        status: bookedDriver.status,
+      })
+    },
+  )
+  .catch(
+    (error) => {
+      res.status(400).json({
+        message: 'Oh no! We are fucked up'
+      })
+    }
+  )
 
-//   res.status(201).json({
-//     message: 'driver is booked',
-//     driver: userData.id,
-//     status: driverData, 
-//   })
-// }
+}
 
 const get = async (req, res) => {
   const id = req.user.id;
@@ -193,5 +227,5 @@ module.exports = {
   registered,
   edited,
   getPassenger,
-  // waitForPassenger,
+  waitForPassenger,
 };

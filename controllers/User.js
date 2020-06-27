@@ -104,7 +104,7 @@ const selectDriver = async (req, res) => {
     res.status(200).send(driver);
   } catch (err) {
     console.log(err);
-  }
+  } 
 };
 
 const edited = async (req, res) => {
