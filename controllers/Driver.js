@@ -78,64 +78,63 @@ const offerRoute = async (req, res) => {
   });
 };
 
-const waitForPassenger = async(req, res) => {
-  let userData = await req.user;
-  let bookedDriver;
-  let bookedDriverPromise = new Promise(function(resolve, reject) {
-    const checkPassenger = setInterval(async() => {
-      console.log('tick tock')
-      let currentDriver = await db.driver.findOne({ 
-        where: 
-          { 
-            id: userData.id, 
-            status: 'available', 
-            passenger_id: null 
-          } 
+const waitForPassenger = async (req, res) => {
+  let driverData = await req.user;
+  let selectedDriver;
+  let selectedDriverPromise = new Promise(function (resolve, reject) {
+    const checkPassenger = setInterval(async () => {
+      console.log('tick tock');
+      let availableDriver = await db.driver.findOne({
+        where: {
+          id: driverData.id,
+          status: 'available',
+          passenger_id: null,
+        },
       });
-      
+
       try {
-        if(!currentDriver) {
+        if (!availableDriver) {
           clearInterval(checkPassenger);
           let isSelected = await db.driver.update(
-            {status: 'selected'},
-            {where: {
-              id: userData.id
-            }},
-            )
-          if(isSelected) {
-            console.log('driver is booked', isSelected)
-            bookedDriver = await db.driver.findOne({where: {id: userData.id}})
-            resolve('driver is selected')
+            { status: 'selected' },
+            {
+              where: {
+                id: driverData.id,
+              },
+            }
+          );
+          if (isSelected) {
+            console.log('driver is selected', isSelected);
+            selectedDriver = await db.driver.findOne({
+              where: { id: driverData.id },
+            });
+            resolve('driver is selected');
             // console.log('driver status', currentDriver.status);
           } else {
             reject('something is wrong');
           }
         }
-      } catch(err) {
-        console.log(err)
+      } catch (err) {
+        console.log(err);
         clearInterval(checkPassenger);
       }
     }, 3000);
   });
 
-  bookedDriverPromise.then(
-    (result) => {
+  selectedDriverPromise
+    .then(result => {
       res.status(201).json({
         message: result,
-        driver: bookedDriver,
-        status: bookedDriver.status,
-      })
-    },
-  )
-  .catch(
-    (error) => {
+        driver: selectedDriver,
+        status: selectedDriver.status,
+      });
+    })
+    .catch(error => {
       res.status(400).json({
-        message: 'Oh no! We are fucked up'
-      })
-    }
-  )
-
-}
+        message: 'Oh no! We are fucked up',
+      });
+    });
+};
 
 const get = async (req, res) => {
   const id = req.user.id;
