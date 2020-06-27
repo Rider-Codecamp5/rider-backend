@@ -147,19 +147,16 @@ const edited = async (req, res) => {
 const getPassenger = async (req, res) => {
   const { passengerId, driverId } = req.body;
 
-  // const checkPassenger = setInterval(async () => {
-  //   const passenger = await db.driver.findOne({
-  //     where: {
-  //       id: driverId,
-  //     },
-  //   });
+  const passengerToAdd = await db.driver.update(
+    { passenger_id: passengerId },
+    {
+      where: {
+        id: driverId,
+      },
+    }
+  );
 
-  //   if (passenger) {
-
-  //     clearInterval(checkPassenger);
-  //   }
-  // }, 2000);
-
+  console.log(passengerToAdd);
   // res.status(200).send(passenger);
 };
 
