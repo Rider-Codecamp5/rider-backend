@@ -76,7 +76,32 @@ const offerRoute = async (req, res) => {
     driver: userData.id,
     details: body,
   });
+
+  const checkPassenger = setInterval(async() => {
+    let waitingDriver = await db.driver.findOne({ where: { id: userData.id, status: 'available', passenger_id: null } });
+    if(!waitingDriver) {
+      clearInterval(checkPassenger);
+    }
+    console.log(waitingDriver.status);
+  }, 3000);
 };
+
+// const waitForPassenger = async(req, res) => {
+
+//   let driverData = await db.driver.findOne({where: { id: userData.id }})
+//   const checkPassenger = setInterval(async() => {
+//     let waitingDriver = await db.driver.findOne({ where: { id: userData.id, status: 'available', passenger_id: null } });
+//     if(!waitingDriver) {
+//       clearInterval(checkPassenger);
+//     }
+//   }, 3000);
+
+//   res.status(201).json({
+//     message: 'driver is booked',
+//     driver: userData.id,
+//     status: driverData, 
+//   })
+// }
 
 const get = async (req, res) => {
   const id = req.user.id;
@@ -171,4 +196,5 @@ module.exports = {
   registered,
   edited,
   getPassenger,
+  // waitForPassenger,
 };
