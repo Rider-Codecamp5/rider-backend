@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+const { QueryTypes } = require('sequelize');
 const db = require('../models');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -88,7 +89,26 @@ const findTrip = async (req, res) => {
       },
     });
 
-    res.status(200).send(result);
+    const driverResultIdx = [];
+    for (let i of result) {
+      driverResultIdx.push(i.id);
+    }
+
+    let allIdIwant = '';
+    for (let item of driverResultIdx) {
+      if (allIdIwant !== '') allIdIwant += ' or ';
+      allIdIwant += `users_data.id = ${item}`;
+    }
+
+    const driversData = await db.sequelize.query(
+      `SELECT * FROM rider_development.drivers drivers_data 
+      join rider_development.users users_data on users_data.id = drivers_data.id
+      and (${allIdIwant})
+      `,
+      { type: QueryTypes.SELECT }
+    );
+
+    res.status(200).send(driversData);
   } catch (err) {
     console.log(err);
   }
@@ -104,7 +124,7 @@ const selectDriver = async (req, res) => {
     res.status(200).send(driver);
   } catch (err) {
     console.log(err);
-  } 
+  }
 };
 
 const edited = async (req, res) => {
