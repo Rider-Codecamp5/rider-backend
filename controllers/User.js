@@ -53,7 +53,23 @@ const loginUser = async (req, res) => {
         name: user.first_name,
       };
       const token = jwt.sign(payload, 'superSecretKey', { expiresIn: 10800 });
-      res.status(200).send({ message: `It's OK`, isSuccess, token });
+      
+      // check whether the user is a driver or not
+      try{
+        const driverInfo = await db.driver.findOne({ where: {id: user.id } })
+        res.status(200).send({ 
+          message: `Driver is logged in`, 
+          isSuccess, token,
+          isDriver: true,
+          driverId: driverInfo.id,
+        });
+      } catch(err) {
+        res.status(200).send({ 
+          message: `User is logged in`, 
+          isSuccess, token,
+          isDriver: false,
+      });
+    }
     } else {
       res.status(400).send({ message: 'Invalid Username or Password' });
     }

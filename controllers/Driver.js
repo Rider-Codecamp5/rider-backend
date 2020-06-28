@@ -131,7 +131,7 @@ const waitForPassenger = async (req, res) => {
     })
     .catch(error => {
       res.status(400).json({
-        message: 'Oh no! We are fucked up',
+        message: 'something is wrong',
       });
     });
 };
