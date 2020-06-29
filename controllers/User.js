@@ -123,7 +123,7 @@ const findTrip = async (req, res) => {
       `,
       { type: QueryTypes.SELECT }
     );
-
+    
     res.status(200).send(driversData);
   } catch (err) {
     console.log(err);
