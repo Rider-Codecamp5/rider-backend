@@ -92,7 +92,8 @@ const getUser = async (req, res) => {
 const findTrip = async (req, res) => {
   const destinationLat = Number(req.query.destinationLat);
   const destinationLng = Number(req.query.destinationLng);
-  // req.user.user_id
+
+  const { date, price, time, luggage, seatingCapacity } = req.query;
 
   const DISTANCE = 0.00899322;
 
@@ -105,6 +106,16 @@ const findTrip = async (req, res) => {
         to_lng: {
           [Op.between]: [destinationLat - DISTANCE, destinationLng + DISTANCE],
         },
+        seating_capacity: {
+          [Op.lt]: seatingCapacity,
+        },
+        price: {
+          [Op.lt]: price,
+        },
+        luggage: {
+          [Op.lt]: luggage,
+        },
+        status: 'available',
       },
     });
 
@@ -126,7 +137,7 @@ const findTrip = async (req, res) => {
       `,
       { type: QueryTypes.SELECT }
     );
-    
+
     res.status(200).send(driversData);
   } catch (err) {
     console.log(err);
@@ -197,7 +208,7 @@ const edited = async (req, res) => {
   }
 };
 
-const waitForConfirmation = async(req, res) => {
+const waitForConfirmation = async (req, res) => {
   let userData = await req.user;
 
   let driverPromise = new Promise(function (resolve, reject) {
@@ -206,19 +217,16 @@ const waitForConfirmation = async(req, res) => {
       let requestedDriver = await db.driver.findOne({
         where: {
           passenger_id: userData.id,
-          [Op.or]: [
-            { confirmation: 'confirmed' },
-            { confirmation: 'pending' },
-          ],
+          [Op.or]: [{ confirmation: 'confirmed' }, { confirmation: 'pending' }],
         },
       });
-      
-      try{
-        if(requestedDriver) {
+
+      try {
+        if (requestedDriver) {
           console.log('if requestedDriver', requestedDriver.id);
-          switch(requestedDriver.confirmation) {
+          switch (requestedDriver.confirmation) {
             case 'confirmed':
-              clearInterval(checkConfirmation)
+              clearInterval(checkConfirmation);
               resolve(requestedDriver);
               break;
             case 'pending':
@@ -231,16 +239,16 @@ const waitForConfirmation = async(req, res) => {
           clearInterval(checkConfirmation);
           resolve('driver rejected ther ride');
         }
-      } catch(err) {
+      } catch (err) {
         reject(err);
-        clearInterval(checkConfirmation)
+        clearInterval(checkConfirmation);
       }
     }, 3000);
   });
 
   driverPromise
     .then(result => {
-      if(result) {
+      if (result) {
         res.status(200).json({
           message: 'driver confirmed your trip',
           confirmation: result.confirmation,
