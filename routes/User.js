@@ -9,6 +9,7 @@ router.post('/createUser', userController.createUser);
 router.post('/loginUser', userController.loginUser);
 router.get('/getUser/:id', auth, userController.getUser);
 router.patch('/edit', auth, userController.edited);
+router.get('/trip/confirmation', auth, userController.waitForConfirmation);
 
 //  find trip
 router.get('/trip', userController.findTrip);

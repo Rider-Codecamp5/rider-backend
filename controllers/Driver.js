@@ -83,7 +83,7 @@ const waitForPassenger = async (req, res) => {
   let selectedDriver;
   let selectedDriverPromise = new Promise(function (resolve, reject) {
     const checkPassenger = setInterval(async () => {
-      console.log('tick tock');
+      console.log('driver is waiting for passenger');
       let availableDriver = await db.driver.findOne({
         where: {
           id: driverData.id,
@@ -96,7 +96,10 @@ const waitForPassenger = async (req, res) => {
         if (!availableDriver) {
           clearInterval(checkPassenger);
           let isSelected = await db.driver.update(
-            { status: 'selected' },
+            { 
+              status: 'selected',
+              confirmation: 'pending'
+            },
             {
               where: {
                 id: driverData.id,
@@ -104,7 +107,6 @@ const waitForPassenger = async (req, res) => {
             }
           );
           if (isSelected) {
-            console.log('driver is selected', isSelected);
             selectedDriver = await db.driver.findOne({
               where: { id: driverData.id },
             });
@@ -115,8 +117,8 @@ const waitForPassenger = async (req, res) => {
           }
         }
       } catch (err) {
-        console.log(err);
         clearInterval(checkPassenger);
+        reject(err);
       }
     }, 3000);
   });
@@ -131,10 +133,55 @@ const waitForPassenger = async (req, res) => {
     })
     .catch(error => {
       res.status(400).json({
-        message: 'something is wrong',
+        message: error,
       });
     });
 };
+
+const driverConfirm = async(req, res) => {
+  let driverData = await req.user;
+  let confirmation = req.body.confirmation;
+
+  try{
+    if(confirmation) {
+      await db.driver.update(
+        {
+        status: 'booked',
+        confirmation: 'confirmed',
+        },
+        { 
+          where: { id: driverData.id }
+        },
+      )
+      res.status(201).json({
+        message: 'reservation is confirmed',
+        status: 'booked',
+        confirmation: 'confirmed',
+      })
+  
+    } else {
+      await db.driver.update(
+        {
+          status: 'available',
+          confirmation: null,
+          passenger_id: null,
+        },
+        { 
+          where: { id: driverData.id }
+        },
+      )
+      res.status(201).json({
+        message: 'reservation is confirmed',
+        status: 'available',
+        confirmation: null,
+      })
+    }
+  } catch(err) {
+    res.status(400).json({
+      message: 'something is wrong',
+    })
+  }
+}
 
 const get = async (req, res) => {
   const id = req.user.id;
@@ -215,7 +262,7 @@ const getPassenger = async (req, res) => {
   );
 
   console.log(passengerToAdd);
-  // res.status(200).send(passenger);
+  res.status(200).send('tbd');
 };
 
 module.exports = {
@@ -227,4 +274,5 @@ module.exports = {
   edited,
   getPassenger,
   waitForPassenger,
+  driverConfirm,
 };
