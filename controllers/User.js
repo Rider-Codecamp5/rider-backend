@@ -53,23 +53,25 @@ const loginUser = async (req, res) => {
         name: user.first_name,
       };
       const token = jwt.sign(payload, 'superSecretKey', { expiresIn: 10800 });
-      
+
       // check whether the user is a driver or not
-      try{
-        const driverInfo = await db.driver.findOne({ where: {id: user.id } })
-        res.status(200).send({ 
-          message: `Driver is logged in`, 
-          isSuccess, token,
+      try {
+        const driverInfo = await db.driver.findOne({ where: { id: user.id } });
+        res.status(200).send({
+          message: `Driver is logged in`,
+          isSuccess,
+          token,
           isDriver: true,
           driverId: driverInfo.id,
         });
-      } catch(err) {
-        res.status(200).send({ 
-          message: `User is logged in`, 
-          isSuccess, token,
+      } catch (err) {
+        res.status(200).send({
+          message: `User is logged in`,
+          isSuccess,
+          token,
           isDriver: false,
-      });
-    }
+        });
+      }
     } else {
       res.status(400).send({ message: 'Invalid Username or Password' });
     }
@@ -90,6 +92,7 @@ const getUser = async (req, res) => {
 const findTrip = async (req, res) => {
   const destinationLat = Number(req.query.destinationLat);
   const destinationLng = Number(req.query.destinationLng);
+  // req.user.user_id
 
   const DISTANCE = 0.00899322;
 
@@ -132,12 +135,27 @@ const findTrip = async (req, res) => {
 
 const selectDriver = async (req, res) => {
   const { id } = req.params;
+  let driverData;
 
   try {
     const driver = await db.driver.findOne({
       where: { id },
+      raw: true,
     });
-    res.status(200).send(driver);
+
+    const user = await db.user.findOne({
+      where: { id },
+    });
+
+    driverData = {
+      ...driver,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      phone_number: user.phone_number,
+      profile_pic: user.profile_pic,
+    };
+
+    res.status(200).send(driverData);
   } catch (err) {
     console.log(err);
   }
