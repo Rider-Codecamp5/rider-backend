@@ -83,7 +83,7 @@ const waitForPassenger = async (req, res) => {
   let selectedDriver;
   let selectedDriverPromise = new Promise(function (resolve, reject) {
     const checkPassenger = setInterval(async () => {
-      console.log('tick tock');
+      console.log('driver is waiting for passenger');
       let availableDriver = await db.driver.findOne({
         where: {
           id: driverData.id,
@@ -107,7 +107,6 @@ const waitForPassenger = async (req, res) => {
             }
           );
           if (isSelected) {
-            console.log('driver is selected', isSelected);
             selectedDriver = await db.driver.findOne({
               where: { id: driverData.id },
             });
@@ -118,8 +117,8 @@ const waitForPassenger = async (req, res) => {
           }
         }
       } catch (err) {
-        console.log(err);
         clearInterval(checkPassenger);
+        reject(err);
       }
     }, 3000);
   });
@@ -134,7 +133,7 @@ const waitForPassenger = async (req, res) => {
     })
     .catch(error => {
       res.status(400).json({
-        message: 'something is wrong',
+        message: error,
       });
     });
 };
@@ -263,7 +262,7 @@ const getPassenger = async (req, res) => {
   );
 
   console.log(passengerToAdd);
-  // res.status(200).send(passenger);
+  res.status(200).send('tbd');
 };
 
 module.exports = {
