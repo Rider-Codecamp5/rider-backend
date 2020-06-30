@@ -80,7 +80,17 @@ const loginUser = async (req, res) => {
 
 const getUser = async (req, res) => {
   const id = await req.user.id;
-  const userData = await db.user.findOne({ where: { id: id }, attributes: ["email","first_name","last_name","profile_pic","phone_number","address"] } );
+  const userData = await db.user.findOne({
+    where: { id: id },
+    attributes: [
+      'email',
+      'first_name',
+      'last_name',
+      'profile_pic',
+      'phone_number',
+      'address',
+    ],
+  });
   try {
     res.send({ userData: userData });
   } catch (e) {
@@ -94,9 +104,8 @@ const findTrip = async (req, res) => {
   const destinationLng = Number(req.query.destinationLng);
 
   const { date, price, time, seatingCapacity } = req.query;
-  const luggage = req.query.luggage === 'true' ? 1 : 0;
 
-  // const DISTANCE = 0.00899322;
+  const luggage = req.query.luggage === 'true' ? 1 : 0;
   const DISTANCE = 0.00899322;
 
   try {
@@ -109,7 +118,7 @@ const findTrip = async (req, res) => {
           [Op.between]: [destinationLng - DISTANCE, destinationLng + DISTANCE],
         },
         seating_capacity: {
-          [Op.gt]: Number(seatingCapacity),
+          [Op.gte]: Number(seatingCapacity),
         },
         price: {
           [Op.lte]: Number(price),
