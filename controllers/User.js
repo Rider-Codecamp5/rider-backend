@@ -95,10 +95,6 @@ const findTrip = async (req, res) => {
 
   const { date, price, time, luggage, seatingCapacity } = req.query;
 
-  console.log(price);
-  console.log(typeof luggage);
-  console.log(seatingCapacity);
-
   const DISTANCE = 0.00899322;
 
   try {
