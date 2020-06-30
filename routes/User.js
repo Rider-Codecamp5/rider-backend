@@ -12,7 +12,7 @@ router.patch('/edit', auth, userController.edited);
 router.get('/trip/confirmation', auth, userController.waitForConfirmation);
 
 //  find trip
-router.get('/trip', userController.findTrip);
-router.get('/trip/:id', userController.selectDriver);
+router.get('/trip', auth, userController.findTrip);
+router.get('/trip/:id', auth, userController.selectDriver);
 
 module.exports = router;
