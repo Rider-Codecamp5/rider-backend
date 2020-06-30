@@ -79,8 +79,8 @@ const loginUser = async (req, res) => {
 };
 
 const getUser = async (req, res) => {
-  const id = req.params.id;
-  const userData = await db.user.findOne({ where: { id: id } });
+  const id = await req.user.id;
+  const userData = await db.user.findOne({ where: { id: id }, attributes: ["email","first_name","last_name","profile_pic","phone_number","address"] } );
   try {
     res.send({ userData: userData });
   } catch (e) {
