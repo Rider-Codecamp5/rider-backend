@@ -93,18 +93,20 @@ const findTrip = async (req, res) => {
   const destinationLat = Number(req.query.destinationLat);
   const destinationLng = Number(req.query.destinationLng);
 
-  const { date, price, time, luggage, seatingCapacity } = req.query;
+  const { date, price, time, seatingCapacity } = req.query;
+  const luggage = req.query.luggage === 'true' ? 1 : 0;
 
+  // const DISTANCE = 0.00899322;
   const DISTANCE = 0.00899322;
 
   try {
     const result = await db.driver.findAll({
       where: {
         to_lat: {
-          [Op.between]: [destinationLat - DISTANCE, destinationLng + DISTANCE],
+          [Op.between]: [destinationLat - DISTANCE, destinationLat + DISTANCE],
         },
         to_lng: {
-          [Op.between]: [destinationLat - DISTANCE, destinationLng + DISTANCE],
+          [Op.between]: [destinationLng - DISTANCE, destinationLng + DISTANCE],
         },
         seating_capacity: {
           [Op.gt]: Number(seatingCapacity),
@@ -112,9 +114,7 @@ const findTrip = async (req, res) => {
         price: {
           [Op.lte]: Number(price),
         },
-        luggage: {
-          [Op.eq]: Boolean(luggage),
-        },
+        luggage,
         status: 'available',
         id: {
           [Op.ne]: Number(req.user.id),
