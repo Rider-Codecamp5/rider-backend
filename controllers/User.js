@@ -110,7 +110,7 @@ const findTrip = async (req, res) => {
           [Op.gt]: Number(seatingCapacity),
         },
         price: {
-          [Op.lt]: Number(price),
+          [Op.lte]: Number(price),
         },
         luggage: {
           [Op.eq]: Boolean(luggage),
@@ -124,6 +124,7 @@ const findTrip = async (req, res) => {
 
     if (result.length === 0) {
       res.status(404).send({ message: 'No driver found' });
+      return;
     }
 
     const driverResultIdx = [];

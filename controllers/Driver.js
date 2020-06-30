@@ -69,13 +69,18 @@ const offerRoute = async (req, res) => {
     status: 'available',
   };
 
-  await db.driver.update(body, { where: { id: userData.id } });
+  try {
+    await db.driver.update(body, { where: { id: userData.id } });
 
-  res.status(201).json({
-    message: 'created new route',
-    driver: userData.id,
-    details: body,
-  });
+    res.status(201).json({
+      message: 'created new route',
+      driver: userData.id,
+      details: body,
+    });
+  } catch (err) {
+    res.status(400).send({ message: 'Cannnot create route' });
+    console.log(err);
+  }
 };
 
 const waitForPassenger = async (req, res) => {
@@ -96,9 +101,9 @@ const waitForPassenger = async (req, res) => {
         if (!availableDriver) {
           clearInterval(checkPassenger);
           let isSelected = await db.driver.update(
-            { 
+            {
               status: 'selected',
-              confirmation: 'pending'
+              confirmation: 'pending',
             },
             {
               where: {
@@ -138,27 +143,26 @@ const waitForPassenger = async (req, res) => {
     });
 };
 
-const driverConfirm = async(req, res) => {
+const driverConfirm = async (req, res) => {
   let driverData = await req.user;
   let confirmation = req.body.confirmation;
 
-  try{
-    if(confirmation) {
+  try {
+    if (confirmation) {
       await db.driver.update(
         {
-        status: 'booked',
-        confirmation: 'confirmed',
+          status: 'booked',
+          confirmation: 'confirmed',
         },
-        { 
-          where: { id: driverData.id }
-        },
-      )
+        {
+          where: { id: driverData.id },
+        }
+      );
       res.status(201).json({
         message: 'reservation is confirmed',
         status: 'booked',
         confirmation: 'confirmed',
-      })
-  
+      });
     } else {
       await db.driver.update(
         {
@@ -166,22 +170,22 @@ const driverConfirm = async(req, res) => {
           confirmation: null,
           passenger_id: null,
         },
-        { 
-          where: { id: driverData.id }
-        },
-      )
+        {
+          where: { id: driverData.id },
+        }
+      );
       res.status(201).json({
         message: 'reservation is confirmed',
         status: 'available',
         confirmation: null,
-      })
+      });
     }
-  } catch(err) {
+  } catch (err) {
     res.status(400).json({
       message: 'something is wrong',
-    })
+    });
   }
-}
+};
 
 const get = async (req, res) => {
   const id = req.user.id;
