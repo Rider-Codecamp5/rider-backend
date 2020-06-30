@@ -95,7 +95,9 @@ const findTrip = async (req, res) => {
 
   const { date, price, time, luggage, seatingCapacity } = req.query;
 
-  console.log(req.user);
+  console.log(price);
+  console.log(typeof luggage);
+  console.log(seatingCapacity);
 
   const DISTANCE = 0.00899322;
 
@@ -108,18 +110,25 @@ const findTrip = async (req, res) => {
         to_lng: {
           [Op.between]: [destinationLat - DISTANCE, destinationLng + DISTANCE],
         },
-        // seating_capacity: {
-        //   [Op.lt]: seatingCapacity,
-        // },
-        // price: {
-        //   [Op.lt]: price,
-        // },
-        // luggage: {
-        //   [Op.lt]: luggage,
-        // },
-        // status: 'available',
+        seating_capacity: {
+          [Op.gt]: Number(seatingCapacity),
+        },
+        price: {
+          [Op.lt]: Number(price),
+        },
+        luggage: {
+          [Op.eq]: Boolean(luggage),
+        },
+        status: 'available',
+        id: {
+          [Op.ne]: Number(req.user.id),
+        },
       },
     });
+
+    if (result.length === 0) {
+      res.status(404).send({ message: 'No driver found' });
+    }
 
     const driverResultIdx = [];
     for (let i of result) {
