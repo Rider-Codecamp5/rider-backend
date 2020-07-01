@@ -8,6 +8,7 @@ const cors = require('cors');
 // const reportRoutes = require('./routes/Report')
 const userRoutes = require('./routes/User');
 const driverRoutes = require('./routes/Driver');
+const paymentRoutes = require('./routes/Payment');
 
 app.use(cors());
 app.use(express.json());
@@ -18,6 +19,7 @@ app.use(express.urlencoded({ extended: false }));
 // app.use("/report", reportRoutes);
 app.use('/user', userRoutes);
 app.use('/driver', driverRoutes);
+app.use('/payment', paymentRoutes);
 
 require('./config/passport/passport');
 
