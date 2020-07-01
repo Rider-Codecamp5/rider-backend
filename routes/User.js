@@ -7,7 +7,7 @@ const auth = passport.authenticate('jwt-authentication', { session: false });
 
 router.post('/createUser', userController.createUser);
 router.post('/loginUser', userController.loginUser);
-router.get('/get', auth, userController.getUser);
+router.get('/get/:id', auth, userController.get);
 router.patch('/edit', auth, userController.edited);
 router.get('/trip/confirmation', auth, userController.waitForConfirmation);
 
