@@ -50,7 +50,7 @@ const offerRoute = async (req, res) => {
   const destination = req.body.destination;
   const destinationLat = req.body.destinationLat;
   const destinationLng = req.body.destinationLng;
-  const date_time = req.body.date + ' ' + req.body.time;
+  const date_time = req.body.date;
   const luggage = req.body.luggage;
   const seating_capacity = req.body.seatingCapacity;
   const price = req.body.price;
@@ -189,7 +189,16 @@ const driverConfirm = async (req, res) => {
 
 const get = async (req, res) => {
   const id = req.user.id;
-  const driver = await db.driver.findOne({ where: { id: id }, attributes: ['driver_license','car_model','car_color','seat','bank_account'] });
+  const driver = await db.driver.findOne({
+    where: { id: id },
+    attributes: [
+      'driver_license',
+      'car_model',
+      'car_color',
+      'seat',
+      'bank_account',
+    ],
+  });
   try {
     if (driver) {
       res.status(200).send({ message: 'OK', driver: driver });
