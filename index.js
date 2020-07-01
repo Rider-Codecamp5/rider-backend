@@ -23,7 +23,7 @@ app.use('/payment', paymentRoutes);
 
 require('./config/passport/passport');
 
-db.sequelize.sync({ force: false }).then(() => {
+db.sequelize.sync({ alter: false }).then(() => {
   app.listen(8000, () => {
     console.log('Server is running on port 8000');
   });

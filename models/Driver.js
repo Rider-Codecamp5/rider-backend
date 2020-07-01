@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.FLOAT,
     },
     date_time: {
-      type: DataTypes.STRING,
+      type: DataTypes.BIGINT,
     },
     seating_capacity: {
       type: DataTypes.INTEGER,
