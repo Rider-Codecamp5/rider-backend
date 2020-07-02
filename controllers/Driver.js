@@ -1,4 +1,5 @@
 const db = require('../models');
+const { Op } = require("sequelize");
 
 const registerDriver = async (req, res) => {
   let userData = await req.user;
@@ -189,16 +190,7 @@ const driverConfirm = async (req, res) => {
 
 const get = async (req, res) => {
   const id = req.user.id;
-  const driver = await db.driver.findOne({
-    where: { id: id },
-    attributes: [
-      'driver_license',
-      'car_model',
-      'car_color',
-      'seat',
-      'bank_account',
-    ],
-  });
+  const driver = await db.driver.findOne({ where: { id: id } });
   try {
     if (driver) {
       res.status(200).send({ message: 'OK', driver: driver });
@@ -278,6 +270,30 @@ const getPassenger = async (req, res) => {
   res.status(200).send('tbd');
 };
 
+const getTrip = async (req, res) => {
+  const id = await req.user.id;
+  console.log('getTrip', id)
+
+  try{
+    const currentTrip = await db.driver.findOne({
+      where : {
+        [Op.or]: [
+          { id: id },
+          { passenger_id: id },
+        ]
+      }
+    })
+  
+    res.status(200).json({
+      currentTrip: currentTrip,
+    })
+  } catch(err) {
+    res.status(404).json({
+      message: 'no trip found',
+    })
+  }
+}
+
 module.exports = {
   registerDriver,
   deleteDriver,
@@ -288,4 +304,5 @@ module.exports = {
   getPassenger,
   waitForPassenger,
   driverConfirm,
+  getTrip,
 };
