@@ -189,20 +189,7 @@ const driverConfirm = async (req, res) => {
 
 const get = async (req, res) => {
   const id = req.user.id;
-<<<<<<< HEAD
-  const driver = await db.driver.findOne({
-    where: { id: id },
-    attributes: [
-      'driver_license',
-      'car_model',
-      'car_color',
-      'seat',
-      'bank_account',
-    ],
-  });
-=======
   const driver = await db.driver.findOne({ where: { id: id } });
->>>>>>> wichaiDriverConfirmation
   try {
     if (driver) {
       res.status(200).send({ message: 'OK', driver: driver });
