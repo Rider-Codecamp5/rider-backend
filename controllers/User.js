@@ -122,7 +122,7 @@ const findTrip = async (req, res) => {
           [Op.ne]: Number(req.user.id),
         },
         date_time: {
-          [Op.lte]: date + 3600,
+          [Op.lte]: [date - 3600, date + 3600],
         },
       },
     });
