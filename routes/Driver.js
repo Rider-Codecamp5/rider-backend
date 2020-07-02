@@ -13,6 +13,7 @@ router.get('/registered/:userId', controllerDriver.registered);
 router.patch('/service', auth, controllerDriver.offerRoute);
 router.patch('/service/wait', auth, controllerDriver.waitForPassenger);
 router.patch('/service/confirm', auth, controllerDriver.driverConfirm);
+router.get('/service/current', auth, controllerDriver.getTrip);
 
 router.patch('/edited', auth, controllerDriver.edited);
 //passenger
