@@ -265,7 +265,7 @@ const waitForConfirmation = async (req, res) => {
 
   driverPromise
     .then(result => {
-      if (result) {
+      if (result.confirmation) {
         res.status(200).json({
           message: 'driver confirmed your trip',
           confirmation: result.confirmation,

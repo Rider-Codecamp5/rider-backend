@@ -189,14 +189,13 @@ const driverConfirm = async (req, res) => {
 };
 
 const get = async (req, res) => {
-  const id = req.user.id;
+  const id = await req.user.id;
   const driver = await db.driver.findOne({ where: { id: id } });
   try {
     if (driver) {
       res.status(200).send({ message: 'OK', driver: driver });
     } else {
-      // res.status(400).send({message: "your aren't driver"})
-      res.status(400).send();
+      res.status(400).send({message: "your aren't driver"})
     }
   } catch (error) {
     res.status(400).send();
