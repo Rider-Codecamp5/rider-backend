@@ -1,9 +1,47 @@
+const Sequelize = require('sequelize');
+const { QueryTypes } = require('sequelize');
+const db = require('../models');
+const { Op } = Sequelize;
+
 require('dotenv').config();
 
 const omise = require('omise')({
   publicKey: process.env.OMISE_PUBLIC_KEY,
   secretKey: process.env.OMISE_SECRET_KEY,
 });
+
+const payToDriver = async (req, res) => {
+  const { id } = req.params;
+  let driverPaymentInfo;
+
+  try {
+    const driver = await db.driver.findOne({
+      where: { id },
+      raw: true,
+    });
+
+    const driverInfo = await db.user.findOne({
+      where: { id },
+    });
+
+    const passenger = await db.user.findOne({
+      where: { id: driver.passenger_id },
+    });
+
+    driverPaymentInfo = {
+      ...driver,
+      first_name: driverInfo.first_name,
+      last_name: driverInfo.last_name,
+      phone_number: driverInfo.phone_number,
+      profile_pic: driverInfo.profile_pic,
+      currentPassenger: passenger,
+    };
+
+    res.status(200).send(driverPaymentInfo);
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 const omiseCheckoutInternetBanking = async (req, res, next) => {
   try {
@@ -26,4 +64,4 @@ const omiseCheckoutInternetBanking = async (req, res, next) => {
   next();
 };
 
-module.exports = { omiseCheckoutInternetBanking };
+module.exports = { omiseCheckoutInternetBanking, payToDriver };
