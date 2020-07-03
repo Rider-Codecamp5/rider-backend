@@ -96,9 +96,11 @@ const findTrip = async (req, res) => {
   const destinationLat = Number(req.query.destinationLat);
   const destinationLng = Number(req.query.destinationLng);
 
-  const { date, price, time, seatingCapacity } = req.query;
+  const { price, seatingCapacity } = req.query;
+  const date = Number(req.query.date);
 
   const luggage = req.query.luggage === 'true' ? 1 : 0;
+  console.log(typeof date);
   const DISTANCE = 0.00899322;
 
   try {
@@ -116,13 +118,15 @@ const findTrip = async (req, res) => {
         price: {
           [Op.lte]: Number(price),
         },
-        luggage,
+        luggage: {
+          [Op.gte]: luggage,
+        },
         status: 'available',
         id: {
           [Op.ne]: Number(req.user.id),
         },
         date_time: {
-          [Op.lte]: [date - 3600, date + 3600],
+          [Op.between]: [date - 3600000, date + 3600000],
         },
       },
     });
