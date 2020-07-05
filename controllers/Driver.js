@@ -1,5 +1,5 @@
 const db = require('../models');
-const { Op } = require("sequelize");
+const { Op, where } = require("sequelize");
 
 const registerDriver = async (req, res) => {
   let userData = await req.user;
@@ -274,17 +274,35 @@ const getTrip = async (req, res) => {
   console.log('getTrip', id)
 
   try{
-    const currentTrip = await db.driver.findOne({
-      where : {
-        [Op.or]: [
-          { id: id },
-          { passenger_id: id },
-        ]
-      }
+    // const currentTrip = await db.driver.findOne({
+    //   where : {
+    //     [Op.or]: [
+    //       { id: id },
+    //       { passenger_id: id },
+    //     ]
+    //   }
+    // })
+    let roleInTrip;
+    let currentTrip = await db.driver.findOne({
+      where: { passenger_id: id },
     })
-  
+    roleInTrip = 'passenger';
+
+    // if not passenger, query as a driver
+    if(!currentTrip) {
+      console.log('hello')
+      currentTrip = await db.driver.findOne({
+        where: { id },
+      })  
+      console.log('hello')
+      console.log(currentTrip)
+      roleInTrip = 'driver';
+    }
+
+
     res.status(200).json({
       currentTrip: currentTrip,
+      roleInTrip: roleInTrip,
     })
   } catch(err) {
     res.status(404).json({
