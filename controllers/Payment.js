@@ -34,6 +34,7 @@ const payToDriver = async (req, res) => {
       last_name: driverInfo.last_name,
       phone_number: driverInfo.phone_number,
       profile_pic: driverInfo.profile_pic,
+      email: driverInfo.email,
       currentPassenger: passenger,
     };
 
@@ -55,7 +56,7 @@ const omiseCheckoutInternetBanking = async (req, res, next) => {
       return_uri: 'http://localhost:3000/payment-result',
     });
 
-    console.log(charge);
+    // console.log(charge);
 
     res.send({ authorizeUri: charge.authorize_uri });
   } catch (err) {
