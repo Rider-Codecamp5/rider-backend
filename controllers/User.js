@@ -254,7 +254,7 @@ const waitForConfirmation = async (req, res) => {
           }
         } else {
           clearInterval(checkConfirmation);
-          resolve('driver rejected ther ride');
+          resolve('driver rejected the ride');
         }
       } catch (err) {
         reject(err);

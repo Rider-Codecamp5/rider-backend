@@ -90,16 +90,26 @@ const waitForPassenger = async (req, res) => {
   let selectedDriverPromise = new Promise(function (resolve, reject) {
     const checkPassenger = setInterval(async () => {
       console.log('driver is waiting for passenger');
-      let availableDriver = await db.driver.findOne({
+      // let availableDriver = await db.driver.findOne({
+      //   where: {
+      //     id: driverData.id,
+      //     status: 'available',
+      //     passenger_id: null,
+      //   },
+      // });
+      let currentDriver = await db.driver.findOne({
         where: {
           id: driverData.id,
-          status: 'available',
-          passenger_id: null,
         },
       });
 
       try {
-        if (!availableDriver) {
+        if(!currentDriver.status) {
+          clearInterval(checkPassenger);
+        }
+        // is avaiable & have passenger
+        if (currentDriver.passenger_id) {
+          console.log('hello from waitForpassenger !availableDriver')
           clearInterval(checkPassenger);
           let isSelected = await db.driver.update(
             {
@@ -119,6 +129,7 @@ const waitForPassenger = async (req, res) => {
             resolve('driver is selected');
             // console.log('driver status', currentDriver.status);
           } else {
+            clearInterval(checkPassenger);
             reject('something is wrong');
           }
         }
@@ -143,6 +154,18 @@ const waitForPassenger = async (req, res) => {
       });
     });
 };
+
+const cancelWaitForPassenger = async(req, res) => {
+  let driverData = await req.user;
+  await db.driver.update(
+    {status: null},
+    {where: {id: driverData.id}},
+  );
+
+  res.status(201).json({
+    message: 'driver stop waiting',
+  })
+}
 
 const driverConfirm = async (req, res) => {
   let driverData = await req.user;
@@ -290,12 +313,9 @@ const getTrip = async (req, res) => {
 
     // if not passenger, query as a driver
     if(!currentTrip) {
-      console.log('hello')
       currentTrip = await db.driver.findOne({
         where: { id },
       })  
-      console.log('hello')
-      console.log(currentTrip)
       roleInTrip = 'driver';
     }
 
@@ -320,6 +340,7 @@ module.exports = {
   edited,
   getPassenger,
   waitForPassenger,
+  cancelWaitForPassenger,
   driverConfirm,
   getTrip,
 };
