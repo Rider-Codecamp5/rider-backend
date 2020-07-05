@@ -100,6 +100,7 @@ const waitForPassenger = async (req, res) => {
 
       try {
         if (!availableDriver) {
+          console.log('hello from waitForpassenger !availableDriver')
           clearInterval(checkPassenger);
           let isSelected = await db.driver.update(
             {
@@ -109,6 +110,9 @@ const waitForPassenger = async (req, res) => {
             {
               where: {
                 id: driverData.id,
+                // passenger_id: {
+                //   [Op.ne]: null,
+                // },
               },
             }
           );
