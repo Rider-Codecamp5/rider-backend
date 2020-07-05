@@ -46,14 +46,14 @@ const payToDriver = async (req, res) => {
 
 const omiseCheckoutInternetBanking = async (req, res, next) => {
   try {
-    const { email, name, amount, token } = req.body;
+    const { email, name, amount, token, driverId } = req.body;
     console.log(req.body);
 
     const charge = await omise.charges.create({
       amount,
       source: token,
       currency: 'thb',
-      return_uri: 'http://localhost:3000/payment-result',
+      return_uri: `http://localhost:3000/payment-result/${driverId}`,
     });
 
     console.log('charge item', charge);
