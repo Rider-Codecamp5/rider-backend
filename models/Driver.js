@@ -59,8 +59,8 @@ module.exports = (sequelize, DataTypes) => {
     confirmation: {
       type: DataTypes.STRING,
     },
-    cancel_reason: {
-      type: DataTypes.STRING,
+    is_paid: {
+      type: DataTypes.BOOLEAN,
     },
   });
 
@@ -68,7 +68,9 @@ module.exports = (sequelize, DataTypes) => {
     driver.belongsTo(models.user, {
       foreignKey: 'passenger_id',
     });
-    driver.hasMany(models.trip_history);
+    driver.hasMany(models.trip_history, {
+      foreignKey: 'driver_id',
+    });
   };
 
   return driver;

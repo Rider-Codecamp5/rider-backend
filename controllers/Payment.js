@@ -56,7 +56,7 @@ const omiseCheckoutInternetBanking = async (req, res, next) => {
       return_uri: 'http://localhost:3000/payment-result',
     });
 
-    // console.log(charge);
+    console.log('charge item', charge);
 
     res.send({ authorizeUri: charge.authorize_uri });
   } catch (err) {

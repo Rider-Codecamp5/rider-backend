@@ -25,9 +25,11 @@ module.exports = (sequelize, DataTypes) => {
 
   user.associate = models => {
     user.hasOne(models.driver, {
-      foreignKey: "passenger_id",
+      foreignKey: 'passenger_id',
     });
-    user.hasMany(models.trip_history);
+    user.hasMany(models.trip_history, {
+      foreignKey: 'passenger_id',
+    });
   };
 
   return user;
