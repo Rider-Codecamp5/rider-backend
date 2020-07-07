@@ -1,7 +1,4 @@
-const Sequelize = require('sequelize');
-const { QueryTypes } = require('sequelize');
 const db = require('../models');
-const { Op } = Sequelize;
 
 require('dotenv').config();
 
@@ -56,7 +53,16 @@ const omiseCheckoutInternetBanking = async (req, res, next) => {
       return_uri: `http://localhost:3000/payment-result/${driverId}`,
     });
 
-    console.log('charge item', charge);
+    await db.driver.update(
+      {
+        is_paid: 1,
+      },
+      {
+        where: {
+          id: driverId,
+        },
+      }
+    );
 
     res.send({ authorizeUri: charge.authorize_uri });
   } catch (err) {

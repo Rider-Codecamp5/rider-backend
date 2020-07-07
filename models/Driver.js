@@ -50,9 +50,6 @@ module.exports = (sequelize, DataTypes) => {
     price: {
       type: DataTypes.STRING,
     },
-    booked_seat: {
-      type: DataTypes.INTEGER,
-    },
     status: {
       type: DataTypes.STRING,
     },
