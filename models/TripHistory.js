@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
     },
     date_time: {
-      type: DataTypes.STRING,
+      type: DataTypes.BIGINT,
     },
     price: {
       type: DataTypes.STRING,
