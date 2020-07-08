@@ -84,7 +84,7 @@ const omiseCheckoutInternetBanking = async (req, res, next) => {
 
     await db.driver.update(
       {
-        status: 'paid',
+        status: null,
         confirmation: null,
         passenger_id: null,
       },
