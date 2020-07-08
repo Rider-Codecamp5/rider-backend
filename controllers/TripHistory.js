@@ -1,5 +1,32 @@
 const db = require('../models');
 
+const getAllPassengerTrip = async(req, res)  => {
+  let userId = await req.user.id;
+  let history = await db.trip_history.findAll({
+    where: {
+      passenger_id: userId,
+    }
+  })
+
+  res.status(200).json({
+    message: 'success getting all trip as a passenger',
+    history,
+  })
+}
+
+const getAllDriverTrip = async(req, res)  => {
+  let userId = await req.user.id;
+  let history = await db.trip_history.findAll({
+    where: {
+      driver_id: userId,
+    }
+  })
+  res.status(200).json({
+    message: 'success getting all trip as a driver',
+    history,
+  })
+}
+
 const getRecentTrip = async (req, res) => {
   let passengerId = await req.user.id;
   let selectedHistory = await db.trip_history.findOne({
@@ -37,4 +64,4 @@ const saveTrip = async (req, res) => {
   res.status(201).json({ message: 'Trip hitory save to database' });
 };
 
-module.exports = { getRecentTrip, saveTrip };
+module.exports = { getAllDriverTrip, getAllPassengerTrip, getRecentTrip, saveTrip };
