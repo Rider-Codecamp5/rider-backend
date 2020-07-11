@@ -2,10 +2,11 @@ const db = require('../models');
 const express = require('express');
 const socketIO = require('socket.io');
 const http = require('http');
+const { Socket, io } = require('../utils/socket');
 
-const app = express();
-const server = http.createServer(app);
-const io = socketIO(server);
+// const app = express();
+// const server = http.createServer(app);
+// const io = socketIO(server);
 
 require('dotenv').config();
 
@@ -66,6 +67,14 @@ const omiseCheckoutInternetBanking = async (req, res, next) => {
       return_uri: `http://localhost:3000/payment-result/${driverId}`,
     });
 
+
+    // io.on('connection', socket => {
+//   socket.on('paymentMessage', body => {
+//     io.emit('paymentMessage', `You have received payment from ${body}`);
+//     console.log(body);
+//   });
+    Socket.emit('paymentMessage', `You have received payment`);
+    
     const currentPassengerId = await req.user.id;
 
     const currentDriver = await db.driver.findOne({

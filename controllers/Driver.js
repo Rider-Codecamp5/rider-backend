@@ -1,5 +1,6 @@
 const db = require('../models');
 const { Op, where } = require("sequelize");
+const { Socket } = require('../utils/socket');
 
 const registerDriver = async (req, res) => {
   let userData = await req.user;
@@ -90,13 +91,6 @@ const waitForPassenger = async (req, res) => {
   let selectedDriverPromise = new Promise(function (resolve, reject) {
     const checkPassenger = setInterval(async () => {
       console.log('driver is waiting for passenger');
-      // let availableDriver = await db.driver.findOne({
-      //   where: {
-      //     id: driverData.id,
-      //     status: 'available',
-      //     passenger_id: null,
-      //   },
-      // });
       let currentDriver = await db.driver.findOne({
         where: {
           id: driverData.id,
@@ -171,8 +165,12 @@ const driverConfirm = async (req, res) => {
   let driverData = await req.user;
   let confirmation = req.body.confirmation;
 
+
   try {
     if (confirmation) {
+      // notify passenger
+      Socket.emit('driverConfirmed', `Driver confirmed your ride`);
+      
       await db.driver.update(
         {
           status: 'booked',
@@ -182,12 +180,16 @@ const driverConfirm = async (req, res) => {
           where: { id: driverData.id },
         }
       );
+
       res.status(201).json({
         message: 'reservation is confirmed',
         status: 'booked',
         confirmation: 'confirmed',
       });
     } else {
+      // notify passenger
+      Socket.emit('driverRejected', `Driver rejected your ride`);
+
       await db.driver.update(
         {
           status: 'available',
@@ -279,6 +281,9 @@ const edited = async (req, res) => {
 const getPassenger = async (req, res) => {
   const { passengerId, driverId } = req.body;
 
+  // notify driver
+
+  Socket.emit('gotPassenger', `You got selected by a passenger!`);
   const passengerToAdd = await db.driver.update(
     { passenger_id: passengerId },
     {
