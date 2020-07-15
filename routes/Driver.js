@@ -20,4 +20,6 @@ router.patch('/edited', auth, controllerDriver.edited);
 //passenger
 router.patch('/service/join', auth, controllerDriver.getPassenger);
 
+router.patch('/service/selected', auth, controllerDriver.gotSelected);
+
 module.exports = router;

@@ -5,10 +5,11 @@ const app = express();
 const cors = require('cors');
 
 // const io = socketIO(server);
-const http = require('http');
-const server = http.createServer(app);
-const { io } = require('./utils/socket');
-io.attach(server);
+// const http = require('http');
+// const server = http.createServer(app);
+// const { io } = require('./utils/socket');
+
+// io.attach(server);
 
 // const reportRoutes = require('./routes/Report')
 const userRoutes = require('./routes/User');
@@ -47,7 +48,11 @@ require('./config/passport/passport');
 // });
 
 db.sequelize.sync({ alter: false }).then(() => {
-  server.listen(8000, () => {
+  const server = app.listen(8000, () => {
     console.log('Server is running on port 8000');
+  });
+  const io = require('./utils/socket').init(server);
+  io.on('connection', (socket) => {
+    console.log('Client connected')
   });
 });

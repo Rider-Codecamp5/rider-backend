@@ -1,8 +1,8 @@
 const db = require('../models');
 const express = require('express');
-const socketIO = require('socket.io');
-const http = require('http');
-const { Socket, io } = require('../utils/socket');
+// const socketIO = require('socket.io');
+// const http = require('http');
+const io = require('../utils/socket');
 
 // const app = express();
 // const server = http.createServer(app);
@@ -73,13 +73,15 @@ const omiseCheckoutInternetBanking = async (req, res, next) => {
 //     io.emit('paymentMessage', `You have received payment from ${body}`);
 //     console.log(body);
 //   });
-    Socket.emit('paymentMessage', `You have received payment`);
     
     const currentPassengerId = await req.user.id;
 
     const currentDriver = await db.driver.findOne({
       passenger_id: currentPassengerId,
     });
+
+    console.log('currentDriver', currentDriver)
+    console.log('before clearing')
 
     await db.trip_history.create({
       passenger_from: passengerOriginLocation,
@@ -103,6 +105,11 @@ const omiseCheckoutInternetBanking = async (req, res, next) => {
         },
       }
     );
+
+    console.log('success clearing')
+
+    //notify driver
+    io.getIO().emit('paymentMessage', `You have received payment`);
 
     res.send({ authorizeUri: charge.authorize_uri });
   } catch (err) {
