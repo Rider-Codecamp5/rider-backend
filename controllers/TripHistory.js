@@ -36,8 +36,6 @@ const getRecentTrip = async (req, res) => {
     order: [['date_time', 'DESC']]
   })
 
-  console.log('recent trip', selectedHistory)
-
   res.status(200).json({
     message: 'success getting the lastest trip',
     selectedHistory,

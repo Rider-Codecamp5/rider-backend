@@ -185,6 +185,7 @@ const selectDriver = async (req, res) => {
 
     res.status(200).send(driverData);
   } catch (err) {
+    res.status(400).send(err)
     console.log(err);
   }
 };
@@ -228,62 +229,108 @@ const edited = async (req, res) => {
 const waitForConfirmation = async (req, res) => {
   let userData = await req.user;
 
-  let driverPromise = new Promise(function (resolve, reject) {
-    const checkConfirmation = setInterval(async () => {
-      console.log('passenger is waiting for confirmation');
-      let requestedDriver = await db.driver.findOne({
-        where: {
-          passenger_id: userData.id,
-          [Op.or]: [{ confirmation: 'confirmed' }, { confirmation: 'pending' }],
-        },
-      });
-
-      try {
-        if (requestedDriver) {
-          console.log('if requestedDriver', requestedDriver.id);
-          switch (requestedDriver.confirmation) {
-            case 'confirmed':
-              clearInterval(checkConfirmation);
-              resolve(requestedDriver);
-              break;
-            case 'pending':
-              break;
-            default:
-              reject('something is wrong');
-              break;
-          }
-        } else {
-          clearInterval(checkConfirmation);
-          resolve('driver rejected the ride');
-        }
-      } catch (err) {
-        reject(err);
-        clearInterval(checkConfirmation);
-      }
-    }, 3000);
+  console.log('passenger is waiting for confirmation');
+  let requestedDriver = await db.driver.findOne({
+    where: {
+      passenger_id: userData.id,
+      [Op.or]: [{ confirmation: 'confirmed' }, { confirmation: 'pending' }],
+    },
   });
 
-  driverPromise
-    .then(result => {
-      if (result.confirmation) {
-        res.status(200).json({
-          message: 'driver confirmed your trip',
-          confirmation: result.confirmation,
-          status: result.status,
-        });
-      } else {
-        res.status(200).json({
-          message: result,
-          confirmation: 'denied',
-        });
-      }
-    })
-    .catch(error => {
-      res.status(400).json({
-        message: error,
-      });
-    });
+  console.log('requestedDriver', requestedDriver)
+
+  res.status(200).send(requestedDriver.confirmation)
+  // try {
+  //   if (requestedDriver) {
+  //     console.log('if requestedDriver', requestedDriver.id);
+  //     switch (requestedDriver.confirmation) {
+  //       case 'confirmed':
+  //         res.status(200).json({
+  //           message: 'driver confirmed your trip',
+  //           confirmation: result.confirmation,
+  //           status: result.status,
+  //         });
+  //         break;
+  //       case 'pending':
+  //         break;
+  //       default:
+  //         res.status(400).json({
+  //           message: 'something is wrong',
+  //         });
+  //         break;
+  //     }
+  //   } else {
+  //     res.status(200).json({
+  //       message: 'driver rejected the ride',
+  //       confirmation: 'denied',
+  //     });
+  //   }
+  // } catch (err) {
+  //   res.status(400).json({
+  //     message: err,
+  //   });
+  // }
 };
+
+// const waitForConfirmation = async (req, res) => {
+//   let userData = await req.user;
+
+//   let driverPromise = new Promise(function (resolve, reject) {
+//     const checkConfirmation = setInterval(async () => {
+//       console.log('passenger is waiting for confirmation');
+//       let requestedDriver = await db.driver.findOne({
+//         where: {
+//           passenger_id: userData.id,
+//           [Op.or]: [{ confirmation: 'confirmed' }, { confirmation: 'pending' }],
+//         },
+//       });
+
+//       try {
+//         if (requestedDriver) {
+//           console.log('if requestedDriver', requestedDriver.id);
+//           switch (requestedDriver.confirmation) {
+//             case 'confirmed':
+//               clearInterval(checkConfirmation);
+//               resolve(requestedDriver);
+//               break;
+//             case 'pending':
+//               break;
+//             default:
+//               reject('something is wrong');
+//               break;
+//           }
+//         } else {
+//           clearInterval(checkConfirmation);
+//           resolve('driver rejected the ride');
+//         }
+//       } catch (err) {
+//         reject(err);
+//         clearInterval(checkConfirmation);
+//       }
+//     }, 3000);
+//   });
+
+//   driverPromise
+//     .then(result => {
+//       if (result.confirmation) {
+//         res.status(200).json({
+//           message: 'driver confirmed your trip',
+//           confirmation: result.confirmation,
+//           status: result.status,
+//         });
+//       } else {
+//         res.status(200).json({
+//           message: result,
+//           confirmation: 'denied',
+//         });
+//       }
+//     })
+//     .catch(error => {
+//       res.status(400).json({
+//         message: error,
+//       });
+//     });
+// };
 
 module.exports = {
   createUser,

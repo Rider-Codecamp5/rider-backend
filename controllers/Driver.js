@@ -1,5 +1,7 @@
 const db = require('../models');
 const { Op, where } = require("sequelize");
+// const { Socket } = require('../utils/socket');
+const io = require('../utils/socket');
 
 const registerDriver = async (req, res) => {
   let userData = await req.user;
@@ -87,73 +89,114 @@ const offerRoute = async (req, res) => {
 const waitForPassenger = async (req, res) => {
   let driverData = await req.user;
   let selectedDriver;
-  let selectedDriverPromise = new Promise(function (resolve, reject) {
-    const checkPassenger = setInterval(async () => {
-      console.log('driver is waiting for passenger');
-      // let availableDriver = await db.driver.findOne({
-      //   where: {
-      //     id: driverData.id,
-      //     status: 'available',
-      //     passenger_id: null,
-      //   },
-      // });
-      let currentDriver = await db.driver.findOne({
-        where: {
-          id: driverData.id,
-        },
-      });
 
-      try {
-        if(!currentDriver.status) {
-          clearInterval(checkPassenger);
-        }
-        // is avaiable & have passenger
-        if (currentDriver.passenger_id) {
-          console.log('hello from waitForpassenger !availableDriver')
-          clearInterval(checkPassenger);
-          let isSelected = await db.driver.update(
-            {
-              status: 'selected',
-              confirmation: 'pending',
+    let currentDriver = await db.driver.findOne({
+      where: {
+        id: driverData.id,
+      },
+    });
+
+    console.log(driverData)
+    try {
+    
+      // is avaiable & have passenger
+      if (currentDriver.passenger_id) {
+        let isSelected = await db.driver.update(
+          {
+            status: 'selected',
+            confirmation: 'pending',
+          },
+          {
+            where: {
+              id: driverData.id,
             },
-            {
-              where: {
-                id: driverData.id,
-              },
-            }
-          );
-          if (isSelected) {
-            selectedDriver = await db.driver.findOne({
-              where: { id: driverData.id },
-            });
-            resolve('driver is selected');
-            // console.log('driver status', currentDriver.status);
-          } else {
-            clearInterval(checkPassenger);
-            reject('something is wrong');
           }
-        }
-      } catch (err) {
-        clearInterval(checkPassenger);
-        reject(err);
-      }
-    }, 3000);
-  });
+        );
+        if (isSelected) {
+          selectedDriver = await db.driver.findOne({
+            where: { id: driverData.id },
+          });
 
-  selectedDriverPromise
-    .then(result => {
-      res.status(201).json({
-        message: result,
-        driver: selectedDriver,
-        status: selectedDriver.status,
-      });
-    })
-    .catch(error => {
+          res.status(201).json({
+            message: 'driver is selected',
+            driver: selectedDriver,
+            status: selectedDriver.status,
+          });
+        } else {
+          res.status(400).json({
+            message: 'something is wrong',
+          });
+        }
+      }
+    } catch(error) {
       res.status(400).json({
         message: error,
       });
-    });
+    }
 };
+// const waitForPassenger = async (req, res) => {
+//   let driverData = await req.user;
+//   let selectedDriver;
+//   let selectedDriverPromise = new Promise(function (resolve, reject) {
+//     const checkPassenger = setInterval(async () => {
+//       console.log('driver is waiting for passenger');
+//       let currentDriver = await db.driver.findOne({
+//         where: {
+//           id: driverData.id,
+//         },
+//       });
+
+//       try {
+//         if(!currentDriver.status) {
+//           clearInterval(checkPassenger);
+//         }
+//         // is avaiable & have passenger
+//         if (currentDriver.passenger_id) {
+//           console.log('hello from waitForpassenger !availableDriver')
+//           clearInterval(checkPassenger);
+//           let isSelected = await db.driver.update(
+//             {
+//               status: 'selected',
+//               confirmation: 'pending',
+//             },
+//             {
+//               where: {
+//                 id: driverData.id,
+//               },
+//             }
+//           );
+//           if (isSelected) {
+//             selectedDriver = await db.driver.findOne({
+//               where: { id: driverData.id },
+//             });
+//             resolve('driver is selected');
+//             // console.log('driver status', currentDriver.status);
+//           } else {
+//             clearInterval(checkPassenger);
+//             reject('something is wrong');
+//           }
+//         }
+//       } catch (err) {
+//         clearInterval(checkPassenger);
+//         reject(err);
+//       }
+//     }, 3000);
+//   });
+
+//   selectedDriverPromise
+//     .then(result => {
+//       res.status(201).json({
+//         message: result,
+//         driver: selectedDriver,
+//         status: selectedDriver.status,
+//       });
+//     })
+//     .catch(error => {
+//       res.status(400).json({
+//         message: error,
+//       });
+//     });
+// };
 
 const cancelWaitForPassenger = async(req, res) => {
   let driverData = await req.user;
@@ -170,7 +213,6 @@ const cancelWaitForPassenger = async(req, res) => {
 const driverConfirm = async (req, res) => {
   let driverData = await req.user;
   let confirmation = req.body.confirmation;
-
   try {
     if (confirmation) {
       await db.driver.update(
@@ -182,12 +224,21 @@ const driverConfirm = async (req, res) => {
           where: { id: driverData.id },
         }
       );
+
       res.status(201).json({
         message: 'reservation is confirmed',
         status: 'booked',
         confirmation: 'confirmed',
       });
+
+      // notify passenger
+      io.getIO().emit('driverConfirmed', {
+        message: `Driver confirmed your ride`,
+        result: 'confirmed',
+      });
+
     } else {
+
       await db.driver.update(
         {
           status: 'available',
@@ -198,11 +249,21 @@ const driverConfirm = async (req, res) => {
           where: { id: driverData.id },
         }
       );
+
+      // notify passenger
+      io.getIO().emit('driverConfirmed', {
+        message: `Driver rejected your ride`,
+        result: 'rejected',
+      });
+
       res.status(201).json({
         message: 'reservation is confirmed',
         status: 'available',
         confirmation: null,
       });
+
+      // // notify passenger
+      // io.getIO().emit('driverRejected', `Driver rejected your ride`);
     }
   } catch (err) {
     res.status(400).json({
@@ -279,17 +340,74 @@ const edited = async (req, res) => {
 const getPassenger = async (req, res) => {
   const { passengerId, driverId } = req.body;
 
-  const passengerToAdd = await db.driver.update(
-    { passenger_id: passengerId },
-    {
+  try{
+    const passengerToAdd = await db.driver.update(
+      { passenger_id: passengerId },
+      {
+        where: {
+          id: driverId,
+        },
+      }
+      );
+    
+    let selectedDriver;
+  
+    console.log('driver is waiting for passenger');
+    let currentDriver = await db.driver.findOne({
       where: {
         id: driverId,
       },
-    }
-  );
+    });
 
-  console.log(passengerToAdd);
-  res.status(200).send('tbd');
+    console.log('currentDriver', currentDriver)
+    try {
+      // is avaiable & have passenger
+      if (currentDriver.passenger_id) {
+        let isSelected = await db.driver.update(
+          {
+            status: 'selected',
+            confirmation: 'pending',
+          },
+          {
+            where: {
+              id: driverId,
+            },
+          }
+        );
+        if (isSelected) {
+          selectedDriver = await db.driver.findOne({
+            where: { id: driverId},
+          });
+          console.log('selectedDriver', selectedDriver)
+
+          // notify driver
+          console.log('emit gotPassenger')
+          io.getIO().emit('gotPassenger', {
+            message: `You got selected by a passenger!`,
+            passengerId: currentDriver.passenger_id,
+          });
+
+
+          res.status(201).json({
+            message: 'driver is selected',
+            driver: selectedDriver,
+            status: selectedDriver.status,
+          });
+          console.log('driver status', selectedDriver.status);
+        } else {
+          res.status(400).json({
+            message: 'something is wrong',
+          });
+        }
+      }
+    } catch(err) {
+      console.log('error at status update to selected')
+      res.status(400).send(err);
+    }
+  } catch(err) {
+    console.log('error at updating passnger Id')
+    res.status(400).send(err);
+  }
 };
 
 const getTrip = async (req, res) => {
@@ -331,6 +449,54 @@ const getTrip = async (req, res) => {
   }
 }
 
+const gotSelected = async (req, res) => {
+  let driverId = req.body.driverId;
+  let selectedDriver;
+    
+    let currentDriver = await db.driver.findOne({
+      where: {
+        id: driverId,
+      },
+    });
+
+    try {
+    
+      // is avaiable & have passenger
+      if (currentDriver.passenger_id) {
+        let isSelected = await db.driver.update(
+          {
+            status: 'selected',
+            confirmation: 'pending',
+          },
+          {
+            where: {
+              id: driverId,
+            },
+          }
+        );
+        if (isSelected) {
+          selectedDriver = await db.driver.findOne({
+            where: { id: driverId},
+          });
+
+          res.status(201).json({
+            message: 'driver is selected',
+            driver: selectedDriver,
+            status: selectedDriver.status,
+          });
+        } else {
+          res.status(400).json({
+            message: 'something is wrong',
+          });
+        }
+      }
+    } catch(error) {
+      res.status(400).json({
+        message: error,
+      });
+    }
+};
+
 module.exports = {
   registerDriver,
   deleteDriver,
@@ -343,4 +509,5 @@ module.exports = {
   cancelWaitForPassenger,
   driverConfirm,
   getTrip,
+  gotSelected,
 };
