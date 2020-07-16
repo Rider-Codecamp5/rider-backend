@@ -29,17 +29,28 @@ const getAllDriverTrip = async (req, res) => {
 
 const getRecentTrip = async (req, res) => {
   let passengerId = await req.user.id;
-  let selectedHistory = await db.trip_history.findOne({
-    where: {
-      passenger_id: passengerId,
-    },
-    order: [['date_time', 'DESC']],
-  });
+  let driverId = Number(req.params.id);
+  console.log(driverId);
+  console.log('params', driverId);
 
-  res.status(200).json({
-    message: 'success getting the lastest trip',
-    selectedHistory,
-  });
+  try {
+    let selectedHistory = await db.trip_history.findOne({
+      where: {
+        passenger_id: passengerId,
+        driver_id: driverId,
+      },
+      // order: [['date_time', 'DESC']]
+    });
+
+    res.status(200).json({
+      message: 'success getting the lastest trip',
+      selectedHistory,
+    });
+  } catch (err) {
+    res.status(400).json({
+      message: 'something is wrong',
+    });
+  }
 };
 
 const saveTrip = async (req, res) => {

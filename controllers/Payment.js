@@ -77,10 +77,13 @@ const omiseCheckoutInternetBanking = async (req, res, next) => {
     const currentPassengerId = await req.user.id;
 
     const currentDriver = await db.driver.findOne({
-      passenger_id: currentPassengerId,
+      where: {
+        passenger_id: currentPassengerId,
+      }
     });
 
-    console.log('currentDriver', currentDriver)
+    console.log('currentPassenger', currentPassengerId)
+    console.log('currentDriver', currentDriver.id)
     console.log('before clearing')
 
     await db.trip_history.create({
@@ -109,7 +112,10 @@ const omiseCheckoutInternetBanking = async (req, res, next) => {
     console.log('success clearing')
 
     //notify driver
-    io.getIO().emit('paymentMessage', `You have received payment`);
+    io.getIO().emit('paymentMessage', {
+      message: `You have received payment`,
+      receiverId: driverId,
+    });
 
     res.send({ authorizeUri: charge.authorize_uri });
   } catch (err) {

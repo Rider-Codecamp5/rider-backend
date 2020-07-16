@@ -7,7 +7,7 @@ const auth = passport.authenticate('jwt-authentication', { session: false });
 
 router.get('/passenger', auth, tripController.getAllPassengerTrip);
 router.get('/driver', auth, tripController.getAllDriverTrip);
-router.get('/recent', auth, tripController.getRecentTrip);
+router.get('/recent/:id', auth, tripController.getRecentTrip);
 router.post('/review', auth, tripController.saveTrip);
 
 module.exports = router;
