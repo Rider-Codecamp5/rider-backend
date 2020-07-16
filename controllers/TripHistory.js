@@ -39,7 +39,7 @@ const getRecentTrip = async (req, res) => {
         passenger_id: passengerId,
         driver_id: driverId,
       },
-      // order: [['date_time', 'DESC']]
+      order: [['createdAt', 'DESC']]
     })
   
     res.status(200).json({
