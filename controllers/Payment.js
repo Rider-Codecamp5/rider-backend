@@ -67,24 +67,25 @@ const omiseCheckoutInternetBanking = async (req, res, next) => {
       return_uri: `http://localhost:3000/payment-result/${driverId}`,
     });
 
+    console.log('this information will show after payment', charge);
 
     // io.on('connection', socket => {
-//   socket.on('paymentMessage', body => {
-//     io.emit('paymentMessage', `You have received payment from ${body}`);
-//     console.log(body);
-//   });
-    
+    //   socket.on('paymentMessage', body => {
+    //     io.emit('paymentMessage', `You have received payment from ${body}`);
+    //     console.log(body);
+    //   });
+
     const currentPassengerId = await req.user.id;
 
     const currentDriver = await db.driver.findOne({
       where: {
         passenger_id: currentPassengerId,
-      }
+      },
     });
 
-    console.log('currentPassenger', currentPassengerId)
-    console.log('currentDriver', currentDriver.id)
-    console.log('before clearing')
+    console.log('currentPassenger', currentPassengerId);
+    console.log('currentDriver', currentDriver.id);
+    console.log('before clearing');
 
     await db.trip_history.create({
       passenger_from: passengerOriginLocation,
@@ -109,13 +110,15 @@ const omiseCheckoutInternetBanking = async (req, res, next) => {
       }
     );
 
-    console.log('success clearing')
+    console.log('success clearing');
 
     //notify driver
-    io.getIO().emit('paymentMessage', {
-      message: `You have received payment`,
-      receiverId: driverId,
-    });
+    setTimeout(() => {
+      io.getIO().emit('paymentMessage', {
+        message: `You have received payment`,
+        receiverId: driverId,
+      });
+    }, 3000);
 
     res.send({ authorizeUri: charge.authorize_uri });
   } catch (err) {
