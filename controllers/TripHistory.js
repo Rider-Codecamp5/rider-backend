@@ -29,12 +29,17 @@ const getAllDriverTrip = async(req, res)  => {
 
 const getRecentTrip = async (req, res) => {
   let passengerId = await req.user.id;
+  let driverId = Number(req.params.id);
+  console.log(driverId)
+  console.log('params', req.params)
   let selectedHistory = await db.trip_history.findOne({
     where: {
       passenger_id: passengerId,
+      driver_id: driverId,
     },
-    order: [['date_time', 'DESC']]
+    // order: [['date_time', 'DESC']]
   })
+
 
   res.status(200).json({
     message: 'success getting the lastest trip',
