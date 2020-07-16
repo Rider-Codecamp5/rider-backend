@@ -213,6 +213,7 @@ const cancelWaitForPassenger = async(req, res) => {
 const driverConfirm = async (req, res) => {
   let driverData = await req.user;
   let confirmation = req.body.confirmation;
+  let passengerId = req.body.passengerId;
   try {
     if (confirmation) {
       await db.driver.update(
@@ -235,7 +236,10 @@ const driverConfirm = async (req, res) => {
       io.getIO().emit('driverConfirmed', {
         message: `Driver confirmed your ride`,
         result: 'confirmed',
+        receiverId: passengerId,
       });
+      console.log(driverData)
+      console.log('passegnerId', driverData.passenger_id)
 
     } else {
 
@@ -254,6 +258,7 @@ const driverConfirm = async (req, res) => {
       io.getIO().emit('driverConfirmed', {
         message: `Driver rejected your ride`,
         result: 'rejected',
+        receiverId: passengerId,
       });
 
       res.status(201).json({
@@ -382,9 +387,11 @@ const getPassenger = async (req, res) => {
 
           // notify driver
           console.log('emit gotPassenger')
+          
           io.getIO().emit('gotPassenger', {
             message: `You got selected by a passenger!`,
             passengerId: currentDriver.passenger_id,
+            receiverId: driverId,
           });
 
 
