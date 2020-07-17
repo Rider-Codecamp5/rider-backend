@@ -39,7 +39,7 @@ const getRecentTrip = async (req, res) => {
         passenger_id: passengerId,
         driver_id: driverId,
       },
-      // order: [['date_time', 'DESC']]
+      order: [['createdAt', 'DESC']],
     });
 
     res.status(200).json({
@@ -56,7 +56,7 @@ const getRecentTrip = async (req, res) => {
 const saveTrip = async (req, res) => {
   let userData = await req.user;
 
-  const { driverId, rating, passengerReview } = req.body;
+  const { tripId, rating, passengerReview } = req.body;
 
   await db.trip_history.update(
     {
@@ -65,7 +65,7 @@ const saveTrip = async (req, res) => {
     },
     {
       where: {
-        driver_id: driverId,
+        id: tripId,
       },
     }
   );
