@@ -67,8 +67,6 @@ const omiseCheckoutInternetBanking = async (req, res, next) => {
       return_uri: `http://localhost:3000/payment-result/${driverId}`,
     });
 
-    console.log('this information will show after payment', charge);
-
     // io.on('connection', socket => {
     //   socket.on('paymentMessage', body => {
     //     io.emit('paymentMessage', `You have received payment from ${body}`);
@@ -118,7 +116,7 @@ const omiseCheckoutInternetBanking = async (req, res, next) => {
         message: `You have received payment`,
         receiverId: driverId,
       });
-    }, 3000);
+    }, 5000);
 
     res.send({ authorizeUri: charge.authorize_uri });
   } catch (err) {
