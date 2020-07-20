@@ -4,6 +4,7 @@ const db = require('../models');
 const bcryptjs = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { Op } = Sequelize;
+const io = require('../utils/socket');
 
 const createUser = async (req, res) => {
   const email = req.body.email;
