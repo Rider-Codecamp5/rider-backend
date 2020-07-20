@@ -504,6 +504,35 @@ const gotSelected = async (req, res) => {
     }
 };
 
+const driverCancelTrip = async(req, res) => {
+  try {
+    let result = db.driver.update(
+      {
+        passenger_id: null,
+        status: null,
+        confirmation: null,
+      }, {
+        where: {
+          id: req.body.userId
+        }
+      }
+    )
+  
+    io.getIO().emit('cancelTrip', {
+      message: `The trip got canceled`,
+      // receiverId: passengerId,
+    });
+  
+    res.status(201).json({
+      message: 'the trip is canceled',
+    })
+  } catch(err) {
+    res.status(400).json({
+      message: 'error',
+    })
+  }
+}
+
 module.exports = {
   registerDriver,
   deleteDriver,
@@ -517,4 +546,5 @@ module.exports = {
   driverConfirm,
   getTrip,
   gotSelected,
+  driverCancelTrip,
 };

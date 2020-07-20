@@ -15,6 +15,7 @@ router.patch('/service/wait', auth, controllerDriver.waitForPassenger);
 router.patch('/service/wait-cancel', auth, controllerDriver.cancelWaitForPassenger);
 router.patch('/service/confirm', auth, controllerDriver.driverConfirm);
 router.get('/service/current', auth, controllerDriver.getTrip);
+router.patch('/service/cancel', auth, controllerDriver.driverCancelTrip);
 
 router.patch('/edited', auth, controllerDriver.edited);
 //passenger

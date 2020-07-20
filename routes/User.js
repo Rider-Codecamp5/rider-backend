@@ -10,6 +10,7 @@ router.post('/loginUser', userController.loginUser);
 router.get('/get/:id', auth, userController.get);
 router.patch('/edit', auth, userController.edited);
 router.get('/trip/confirmation', auth, userController.waitForConfirmation);
+router.patch('/trip/cancel', auth, userController.passengerCancelTrip);
 
 //  find trip
 router.get('/trip', auth, userController.findTrip);

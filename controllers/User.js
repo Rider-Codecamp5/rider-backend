@@ -332,6 +332,35 @@ const waitForConfirmation = async (req, res) => {
 //     });
 // };
 
+const passengerCancelTrip = async(req, res) => {
+  try {
+    let result = db.driver.update(
+      {
+        passenger_id: null,
+        status: null,
+        confirmation: null,
+      }, {
+        where: {
+          passenger_id: req.body.userId
+        }
+      }
+    )
+  
+    io.getIO().emit('cancelTrip', {
+      message: `The trip got canceled`,
+      // receiverId: passengerId,
+    });
+  
+    res.status(201).json({
+      message: 'the trip is canceled',
+    })
+  } catch(err) {
+    res.status(400).json({
+      message: 'error',
+    })
+  }
+}
+
 module.exports = {
   createUser,
   loginUser,
@@ -340,4 +369,5 @@ module.exports = {
   edited,
   selectDriver,
   waitForConfirmation,
+  passengerCancelTrip,
 };
