@@ -20,8 +20,8 @@ const createUser = async (req, res) => {
     if (user) {
       res.status(400).send({ message: 'Invalid your E-mail' });
     } else {
-      const salt = bcryptjs.genSaltSync(12);
-      const hashedPassword = bcryptjs.hashSync(password, salt);
+      const salt = await bcryptjs.genSalt(12);
+      const hashedPassword = await bcryptjs.hash(password, salt);
       const body = {
         email,
         password: hashedPassword,
@@ -47,7 +47,7 @@ const loginUser = async (req, res) => {
   if (!user) {
     res.status(400).send({ message: 'Invalid Username or Password' });
   } else {
-    const isSuccess = bcryptjs.compareSync(password, user.password);
+    const isSuccess = await bcryptjs.compare(password, user.password);
     if (isSuccess) {
       const payload = {
         id: user.id,
@@ -186,7 +186,7 @@ const selectDriver = async (req, res) => {
 
     res.status(200).send(driverData);
   } catch (err) {
-    res.status(400).send(err)
+    res.status(400).send(err);
     console.log(err);
   }
 };
@@ -238,9 +238,9 @@ const waitForConfirmation = async (req, res) => {
     },
   });
 
-  console.log('requestedDriver', requestedDriver)
+  console.log('requestedDriver', requestedDriver);
 
-  res.status(200).send(requestedDriver.confirmation)
+  res.status(200).send(requestedDriver.confirmation);
   // try {
   //   if (requestedDriver) {
   //     console.log('if requestedDriver', requestedDriver.id);
@@ -333,34 +333,35 @@ const waitForConfirmation = async (req, res) => {
 //     });
 // };
 
-const passengerCancelTrip = async(req, res) => {
+const passengerCancelTrip = async (req, res) => {
   try {
     let result = db.driver.update(
       {
         passenger_id: null,
         status: null,
         confirmation: null,
-      }, {
+      },
+      {
         where: {
-          passenger_id: req.body.userId
-        }
+          passenger_id: req.body.userId,
+        },
       }
-    )
-  
+    );
+
     io.getIO().emit('cancelTrip', {
       message: `The trip got canceled`,
       // receiverId: passengerId,
     });
-  
+
     res.status(201).json({
       message: 'the trip is canceled',
-    })
-  } catch(err) {
+    });
+  } catch (err) {
     res.status(400).json({
       message: 'error',
-    })
+    });
   }
-}
+};
 
 module.exports = {
   createUser,
